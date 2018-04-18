@@ -1,9 +1,6 @@
 package com.theprogrammingturkey.ggserver.services;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashMap;
@@ -31,8 +28,7 @@ public class ServiceManager
 
 	public static void startService(File file)
 	{
-		String serviceName = getFileName(file.getName());
-		ServerCore.output(Level.Info, "Starting Service " + serviceName + "...");
+		ServerCore.output(Level.Info, "Starting Service from file" + file.getName() + "...");
 		try
 		{
 			URLClassLoader loader = new URLClassLoader(new URL[] { file.toURI().toURL() });
@@ -49,34 +45,34 @@ public class ServiceManager
 			{
 				IServiceCore service = (IServiceCore) instanceClazz;
 				service.init();
-				String name = service.getServiceName();
+				String name = service.getServiceID();
 				services.put(name, service);
 				serviceFiles.put(name, file);
-				ServerCore.output(Level.Info, "Started Service " + serviceName);
+				ServerCore.output(Level.Info, "Started Service " + service.getServiceName() + " from file " + file.getName());
 			}
 			else
 			{
-				ServerCore.output(Level.Error, "Unable to start service! Core class does not implement IServiceCore!");
+				ServerCore.output(Level.Error, "Unable to start service from file " + file.getName() + "! Core class does not implement IServiceCore!");
 			}
 
 		} catch(Exception e)
 		{
-			ServerCore.output(Level.Error, "Unable to start service " + serviceName + ".");
+			ServerCore.output(Level.Error, "Unable to start service " + file.getName() + ".");
 			ServerCore.output(Level.Error, e.getMessage());
 		}
 	}
 
-	public static void stopService(String serviceName)
+	public static void stopService(String serviceID)
 	{
 		try
 		{
-			services.get(serviceName).stop();
-			services.remove(serviceName);
-			serviceFiles.remove(serviceName);
-			ServerCore.output(Level.Info, serviceName + " Stopped.");
+			services.get(serviceID).stop();
+			IServiceCore service = services.remove(serviceID);
+			serviceFiles.remove(serviceID);
+			ServerCore.output(Level.Info, service.getServiceName() + " Stopped.");
 		} catch(Exception e)
 		{
-			ServerCore.output(Level.Error, "Unable to stop service " + serviceName + ".");
+			ServerCore.output(Level.Error, "Unable to stop service with the id " + serviceID + ".");
 		}
 	}
 	
@@ -90,35 +86,5 @@ public class ServiceManager
 	private static String getFileExtension(String name)
 	{
 		return name.substring(name.lastIndexOf("."));
-	}
-
-	private static String getFileName(String name)
-	{
-		return name.substring(0, name.lastIndexOf("."));
-	}
-
-	public static class ConsoleOutput implements Runnable
-	{
-		private Process p;
-
-		public ConsoleOutput(Process p)
-		{
-			this.p = p;
-		}
-
-		@Override
-		public void run()
-		{
-			BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			String line = null;
-			try
-			{
-				while((line = reader.readLine()) != null)
-					ServerCore.output(Level.Info, line);
-			} catch(IOException e)
-			{
-				e.printStackTrace();
-			}
-		}
 	}
 }

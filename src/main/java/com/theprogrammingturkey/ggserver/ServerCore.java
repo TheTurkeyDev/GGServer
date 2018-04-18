@@ -23,7 +23,7 @@ public class ServerCore extends CcsClient
 
 	public ServerCore(String projectId, String apiKey)
 	{
-		super("454710853899", "AAAAad7hAQs:APA91bGDDQvaD2-Ih-aPSN3sGtX_DZjFxzcVHxOHuHnqfL6V2X3S1pSDbnwuXp3bsNKFRnk10iLsQRjSzRg4YOMNxQ5Xl7r65R1oAfXUhoYP9wixl37nlXSXYgWoLfYT27_4n-y6TOrx", debug);
+		super("454710853899", "", debug);
 		instance = this;
 		output(Level.Info, "Starting Firebase Connection...");
 		if(connectToFirebase())

@@ -7,4 +7,6 @@ public interface IServiceCore
 	public void stop();
 	
 	public String getServiceName();
+	
+	public String getServiceID();
 }
