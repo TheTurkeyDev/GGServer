@@ -1,4 +1,4 @@
-package com.theprogrammingturkey.turkeyPiServer;
+package com.theprogrammingturkey.ggserver;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -8,8 +8,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import com.theprogrammingturkey.turkeyPiServer.client.SocketClient;
-import com.theprogrammingturkey.turkeyPiServer.services.ServiceManager;
+import com.theprogrammingturkey.ggserver.client.SocketClient;
+import com.theprogrammingturkey.ggserver.services.ServiceManager;
 import com.wedevol.xmpp.server.CcsClient;
 
 public class ServerCore extends CcsClient

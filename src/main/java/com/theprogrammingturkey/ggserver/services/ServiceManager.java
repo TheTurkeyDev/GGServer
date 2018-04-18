@@ -1,4 +1,4 @@
-package com.theprogrammingturkey.turkeyPiServer.services;
+package com.theprogrammingturkey.ggserver.services;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -10,8 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import com.theprogrammingturkey.turkeyPiServer.ServerCore;
-import com.theprogrammingturkey.turkeyPiServer.ServerCore.Level;
+import com.theprogrammingturkey.ggserver.ServerCore;
+import com.theprogrammingturkey.ggserver.ServerCore.Level;
 
 public class ServiceManager
 {

@@ -1,4 +1,4 @@
-package com.theprogrammingturkey.turkeyPiServer.client;
+package com.theprogrammingturkey.ggserver.client;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;

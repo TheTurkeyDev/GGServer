@@ -4,7 +4,15 @@
 
 	<groupId>com.theprogrammingturkey.ggserver</groupId>
 	<artifactId>GGServer</artifactId>
+	<version>0.1.0.${build.number}</version>
 	<packaging>jar</packaging>
+	<distributionManagement>
+		<repository>
+			<id>ggserver</id>
+			<name>GG Server</name>
+			<url>${mavendir}</url>
+		</repository>
+	</distributionManagement>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -12,7 +20,16 @@
 		<smack.version>4.2.0</smack.version>
 		<json-simple.version>1.1.1</json-simple.version>
 	</properties>
-
+	<repositories>
+		<repository>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>theprogrammingturkey</id>
+			<name>The Programming Turkey Maven Repo</name>
+			<url>https://maven.theprogrammingturkey.com/</url>
+		</repository>
+	</repositories>
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
 		<dependency>
@@ -24,6 +41,11 @@
 			<groupId>com.googlecode.json-simple</groupId>
 			<artifactId>json-simple</artifactId>
 			<version>${json-simple.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.wedevol</groupId>
+			<artifactId>xmppserver2</artifactId>
+			<version>0.2.0</version>
 		</dependency>
 	</dependencies>
 
@@ -45,12 +67,11 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>com.theprogrammingturkey.turkeyPiServer.ServerCore</mainClass>
+							<mainClass>com.theprogrammingturkey.ggserver.ServerCore</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
-	<version>0.1</version>
 </project>

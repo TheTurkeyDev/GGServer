@@ -1,11 +1,11 @@
-package com.theprogrammingturkey.turkeyPiServer;
+package com.theprogrammingturkey.ggserver;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.JsonObject;
-import com.theprogrammingturkey.turkeyPiServer.ServerCore.Level;
-import com.theprogrammingturkey.turkeyPiServer.client.ClientConnection;
+import com.theprogrammingturkey.ggserver.ServerCore.Level;
+import com.theprogrammingturkey.ggserver.client.ClientConnection;
 
 public class ClientManager
 {

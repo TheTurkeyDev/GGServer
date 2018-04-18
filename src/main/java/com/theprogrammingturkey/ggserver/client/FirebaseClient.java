@@ -1,8 +1,8 @@
-package com.theprogrammingturkey.turkeyPiServer.client;
+package com.theprogrammingturkey.ggserver.client;
 
 import com.google.gson.JsonObject;
-import com.theprogrammingturkey.turkeyPiServer.ServerCore;
-import com.theprogrammingturkey.turkeyPiServer.util.JsonHelper;
+import com.theprogrammingturkey.ggserver.ServerCore;
+import com.theprogrammingturkey.ggserver.util.JsonHelper;
 import com.wedevol.xmpp.bean.CcsOutMessage;
 import com.wedevol.xmpp.server.MessageHelper;
 import com.wedevol.xmpp.util.Util;

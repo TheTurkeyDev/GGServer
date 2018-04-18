@@ -1,4 +1,4 @@
-package com.theprogrammingturkey.turkeyPiServer.client;
+package com.theprogrammingturkey.ggserver.client;
 
 import java.io.BufferedInputStream;
 import java.io.DataOutputStream;
@@ -8,10 +8,10 @@ import java.net.Socket;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.theprogrammingturkey.turkeyPiServer.ClientManager;
-import com.theprogrammingturkey.turkeyPiServer.ServerCore;
-import com.theprogrammingturkey.turkeyPiServer.ServerCore.Level;
-import com.theprogrammingturkey.turkeyPiServer.services.ServiceManager;
+import com.theprogrammingturkey.ggserver.ClientManager;
+import com.theprogrammingturkey.ggserver.ServerCore;
+import com.theprogrammingturkey.ggserver.ServerCore.Level;
+import com.theprogrammingturkey.ggserver.services.ServiceManager;
 
 public class SocketClient implements Runnable, ClientConnection
 {

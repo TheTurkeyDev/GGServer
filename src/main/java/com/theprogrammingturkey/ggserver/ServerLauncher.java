@@ -1,4 +1,4 @@
-package com.theprogrammingturkey.turkeyPiServer;
+package com.theprogrammingturkey.ggserver;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,7 +8,7 @@ import java.util.Properties;
 
 import org.jivesoftware.smack.SmackException;
 
-import com.theprogrammingturkey.turkeyPiServer.ServerCore.Level;
+import com.theprogrammingturkey.ggserver.ServerCore.Level;
 
 public class ServerLauncher
 {

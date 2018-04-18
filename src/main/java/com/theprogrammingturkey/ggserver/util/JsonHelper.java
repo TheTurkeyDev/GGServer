@@ -1,4 +1,4 @@
-package com.theprogrammingturkey.turkeyPiServer.util;
+package com.theprogrammingturkey.ggserver.util;
 
 import java.util.Map;
 

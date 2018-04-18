@@ -1,4 +1,4 @@
-package com.theprogrammingturkey.turkeyPiServer.services;
+package com.theprogrammingturkey.ggserver.services;
 
 public interface IServiceCore
 {
