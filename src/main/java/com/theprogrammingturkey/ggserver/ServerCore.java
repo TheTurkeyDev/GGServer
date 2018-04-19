@@ -1,7 +1,9 @@
 package com.theprogrammingturkey.ggserver;
 
+import java.io.BufferedReader;
 import java.io.EOFException;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
@@ -9,6 +11,8 @@ import java.util.Date;
 import java.util.Locale;
 
 import com.theprogrammingturkey.ggserver.client.SocketClient;
+import com.theprogrammingturkey.ggserver.commands.CommandManager;
+import com.theprogrammingturkey.ggserver.commands.SimpleCommand;
 import com.theprogrammingturkey.ggserver.services.ServiceManager;
 import com.wedevol.xmpp.server.CcsClient;
 
@@ -32,7 +36,10 @@ public class ServerCore extends CcsClient
 		socketThread = new Thread(new SocketManager());
 		socketThread.start();
 		output(Level.Info, "Pi Server", "Server Started!");
+		output(Level.Info, "Pi Server", "Loading Services...");
 		ServiceManager.startServices();
+		output(Level.Info, "Pi Server", "Services Loaded!");
+		initConsoleUnput();
 	}
 
 	public boolean connectToFirebase()
@@ -58,7 +65,7 @@ public class ServerCore extends CcsClient
 	{
 		if(level == Level.DeBug && !debug)
 			return;
-		
+
 		System.out.println("[" + dateFormatter.format(new Date()) + "][" + sender + "] [" + level.getLevel() + "]: " + message);
 	}
 
@@ -81,6 +88,62 @@ public class ServerCore extends CcsClient
 		public String getLevel()
 		{
 			return this.level;
+		}
+	}
+
+	private void initConsoleUnput()
+	{
+		CommandManager.registerCommand(new SimpleCommand("ping", "Ding Dong!", "/ping")
+		{
+
+			@Override
+			public boolean onCommand(String[] args)
+			{
+				ServerCore.output(Level.Info, "Pi Server", "Pong!");
+				return true;
+			}
+
+		});
+
+		InputCheckThread input = new InputCheckThread();
+		input.init();
+	}
+
+	private class InputCheckThread implements Runnable
+	{
+		private boolean run = false;
+		private Thread thread;
+
+		public void init()
+		{
+			run = true;
+			if(thread == null || !thread.isAlive())
+			{
+				thread = new Thread(this);
+				thread.start();
+			}
+		}
+
+		public void run()
+		{
+			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+			while(run)
+			{
+				try
+				{
+					CommandManager.processCommand(br.readLine());
+				} catch(IOException e)
+				{
+					e.printStackTrace();
+				}
+			}
+			try
+			{
+				thread.interrupt();
+				thread.join();
+			} catch(InterruptedException e)
+			{
+			}
 		}
 	}
 

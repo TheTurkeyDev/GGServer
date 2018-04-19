@@ -7,28 +7,11 @@ import com.google.gson.JsonElement;
 
 public class EventManager
 {
-	private static List<ConsoleCommandEvent> consoleCommandListeners = new ArrayList<>();
 	private static List<PacketRecievedEvent> packetListeners = new ArrayList<>();
 
-	public static void registerConsoleCommandListener(ConsoleCommandEvent listener)
+	public static void registerPacketListener(PacketRecievedEvent listener)
 	{
-		consoleCommandListeners.add(listener);
-	}
-
-	public static void registerPacketListener(ConsoleCommandEvent listener)
-	{
-		consoleCommandListeners.add(listener);
-	}
-
-	public static void fireConsoleCommandEvent(String commandBase, String[] args)
-	{
-		for(ConsoleCommandEvent listener : consoleCommandListeners)
-		{
-			if(commandBase.equals(listener.getCommandBase()))
-			{
-				listener.onConsoleCommandEvent(args);
-			}
-		}
+		packetListeners.add(listener);
 	}
 
 	public static void firePacketRecievedEvent(String destination, JsonElement json)
