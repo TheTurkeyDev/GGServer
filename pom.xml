@@ -45,8 +45,13 @@
 		<dependency>
 			<groupId>com.wedevol</groupId>
 			<artifactId>xmppserver2</artifactId>
-			<version>0.2.0</version>
+			<version>0.1.0</version>
 		</dependency>
+		<dependency>
+		  <groupId>com.theprogrammingturkey.volatiliaApi</groupId>
+		  <artifactId>VolatiliaAPI-Java</artifactId>
+		  <version>0.1.2.22</version>
+	    </dependency>
 	</dependencies>
 
 	<build>
