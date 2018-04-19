@@ -46,3 +46,4 @@ tmp
 *.tgz
 /dist/
 
+settings.prop

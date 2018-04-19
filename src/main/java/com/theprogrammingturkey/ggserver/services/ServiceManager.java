@@ -17,7 +17,11 @@ public class ServiceManager
 
 	public static void startServices()
 	{
-		for(File file : new File("/Services").listFiles())
+		File servicesFolder = new File("services");
+		if(!servicesFolder.exists())
+			servicesFolder.mkdirs();
+		
+		for(File file : servicesFolder.listFiles())
 		{
 			if(getFileExtension(file.getName()).equalsIgnoreCase(".jar"))
 			{

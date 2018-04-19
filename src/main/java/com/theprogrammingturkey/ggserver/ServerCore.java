@@ -23,7 +23,7 @@ public class ServerCore extends CcsClient
 
 	public ServerCore(String projectId, String apiKey)
 	{
-		super("454710853899", "", debug);
+		super(projectId, apiKey, debug);
 		instance = this;
 		output(Level.Info, "Starting Firebase Connection...");
 		if(connectToFirebase())
@@ -103,13 +103,12 @@ public class ServerCore extends CcsClient
 				{
 					while(running)
 					{
-						output(Level.Info, "Waiting for client socket connection...");
 						Socket connection = server.accept();
 						SocketClient client = new SocketClient(connection, connection.getInetAddress().toString());
 						Thread thread = new Thread(client);
 						thread.start();
 						ClientManager.addClient(client);
-						output(Level.Info, "Streams are now setup!");
+						output(Level.Info, client.getIP() + " has connected");
 					}
 				} catch(EOFException eofException)
 				{

@@ -21,7 +21,8 @@ public class ServerLauncher
 			file.createNewFile();
 			try
 			{
-				//TODO: Copy a default file
+				properties.setProperty("ProjectID", "");
+				properties.setProperty("APIKey", "");
 				properties.store(new FileOutputStream(file), "");
 			} catch(Exception e)
 			{
