@@ -32,7 +32,7 @@ public class ServiceManager
 
 	public static void startService(File file)
 	{
-		ServerCore.output(Level.Info, "Starting Service from file" + file.getName() + "...");
+		ServerCore.output(Level.Info, "Pi Server", "Starting Service from file" + file.getName() + "...");
 		try
 		{
 			URLClassLoader loader = new URLClassLoader(new URL[] { file.toURI().toURL() });
@@ -52,17 +52,17 @@ public class ServiceManager
 				String name = service.getServiceID();
 				services.put(name, service);
 				serviceFiles.put(name, file);
-				ServerCore.output(Level.Info, "Started Service " + service.getServiceName() + " from file " + file.getName());
+				ServerCore.output(Level.Info, "Pi Server", "Started Service " + service.getServiceName() + " from file " + file.getName());
 			}
 			else
 			{
-				ServerCore.output(Level.Error, "Unable to start service from file " + file.getName() + "! Core class does not implement IServiceCore!");
+				ServerCore.output(Level.Error, "Pi Server", "Unable to start service from file " + file.getName() + "! Core class does not implement IServiceCore!");
 			}
 
 		} catch(Exception e)
 		{
-			ServerCore.output(Level.Error, "Unable to start service " + file.getName() + ".");
-			ServerCore.output(Level.Error, e.getMessage());
+			ServerCore.output(Level.Error, "Pi Server", "Unable to start service " + file.getName() + ".");
+			ServerCore.output(Level.Error, "Pi Server", e.getMessage());
 		}
 	}
 
@@ -73,10 +73,10 @@ public class ServiceManager
 			services.get(serviceID).stop();
 			IServiceCore service = services.remove(serviceID);
 			serviceFiles.remove(serviceID);
-			ServerCore.output(Level.Info, service.getServiceName() + " Stopped.");
+			ServerCore.output(Level.Info, "Pi Server", service.getServiceName() + " Stopped.");
 		} catch(Exception e)
 		{
-			ServerCore.output(Level.Error, "Unable to stop service with the id " + serviceID + ".");
+			ServerCore.output(Level.Error, "Pi Server", "Unable to stop service with the id " + serviceID + ".");
 		}
 	}
 	

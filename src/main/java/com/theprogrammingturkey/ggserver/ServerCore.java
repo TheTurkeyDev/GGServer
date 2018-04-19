@@ -25,13 +25,13 @@ public class ServerCore extends CcsClient
 	{
 		super(projectId, apiKey, debug);
 		instance = this;
-		output(Level.Info, "Starting Firebase Connection...");
+		output(Level.Info, "Pi Server", "Starting Firebase Connection...");
 		if(connectToFirebase())
-			output(Level.Info, "Firebase Connected!");
-		output(Level.Info, "Starting Server...");
+			output(Level.Info, "Pi Server", "Firebase Connected!");
+		output(Level.Info, "Pi Server", "Starting Server...");
 		socketThread = new Thread(new SocketManager());
 		socketThread.start();
-		output(Level.Info, "Server Started!");
+		output(Level.Info, "Pi Server", "Server Started!");
 		ServiceManager.startServices();
 	}
 
@@ -51,18 +51,15 @@ public class ServerCore extends CcsClient
 	@Override
 	public void log(java.util.logging.Level level, String message)
 	{
-		output(Level.Info, message);
+		output(Level.Info, "Pi Server", message);
 	}
 
-	public static void output(Level level, String message)
+	public static void output(Level level, String sender, String message)
 	{
 		if(level == Level.DeBug && !debug)
 			return;
-
-		if(message.contains("[TurkeyBot]"))
-			System.out.println("[" + dateFormatter.format(new Date()) + "]" + message);
-		else
-			System.out.println("[" + dateFormatter.format(new Date()) + "][Pi Server] [" + level.getLevel() + "]: " + message);
+		
+		System.out.println("[" + dateFormatter.format(new Date()) + "][" + sender + "] [" + level.getLevel() + "]: " + message);
 	}
 
 	public static void sendFCMMessage(String message)
@@ -108,14 +105,14 @@ public class ServerCore extends CcsClient
 						Thread thread = new Thread(client);
 						thread.start();
 						ClientManager.addClient(client);
-						output(Level.Info, client.getIP() + " has connected");
+						output(Level.Info, "Pi Server", client.getIP() + " has connected");
 					}
 				} catch(EOFException eofException)
 				{
-					output(Level.Info, "\n Server ended the connection! ");
+					output(Level.Info, "Pi Server", "\n Server ended the connection! ");
 				} finally
 				{
-					output(Level.Info, "Closing connections...");
+					output(Level.Info, "Pi Server", "Closing connections...");
 					try
 					{
 						ClientManager.closeAllClients();
@@ -127,7 +124,7 @@ public class ServerCore extends CcsClient
 				}
 			} catch(IOException ioException)
 			{
-				output(Level.Error, "There is already a server running on that port!");
+				output(Level.Error, "Pi Server", "There is already a server running on that port!");
 			}
 		}
 	}

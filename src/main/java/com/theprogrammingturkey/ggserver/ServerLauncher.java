@@ -27,7 +27,7 @@ public class ServerLauncher
 			} catch(Exception e)
 			{
 			}
-			ServerCore.output(Level.Severe, "Settings file generated. Please enter information in file.");
+			ServerCore.output(Level.Severe, "Pi Server", "Settings file generated. Please enter information in file.");
 			return;
 		}
 		FileInputStream iStream = new FileInputStream(file);

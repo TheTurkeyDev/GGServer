@@ -64,7 +64,7 @@ public class SocketClient implements Runnable, ClientConnection
 
 					String message = buffer.toString().replaceAll("<SPLIT>", "");
 
-					ServerCore.output(Level.DeBug, "Packet IN -> " + message);
+					ServerCore.output(Level.DeBug, "Pi Server", "Packet IN -> " + message);
 
 					if(message.trim().equals(""))
 						continue;
@@ -75,7 +75,7 @@ public class SocketClient implements Runnable, ClientConnection
 					if(purpose.equals("handshake"))
 					{
 						this.name = json.get("data").getAsJsonObject().get("name").getAsString();
-						ServerCore.output(Level.Info, name + " has connected!");
+						ServerCore.output(Level.Info, "Pi Server", name + " has connected!");
 					}
 					else if(purpose.equals("message"))
 					{

@@ -41,7 +41,7 @@ public class ClientManager
 	{
 		client.closeConnection();
 		clients.remove(client);
-		ServerCore.output(Level.Info, client.getName() + " was disconnected with the given reason: " + reason);
+		ServerCore.output(Level.Info, "Pi Server", client.getName() + " was disconnected with the given reason: " + reason);
 	}
 
 	public static void sendClientMessage(String client, JsonObject message)
