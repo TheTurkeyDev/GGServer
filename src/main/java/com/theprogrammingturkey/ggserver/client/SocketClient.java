@@ -11,7 +11,6 @@ import com.google.gson.JsonParser;
 import com.theprogrammingturkey.ggserver.ClientManager;
 import com.theprogrammingturkey.ggserver.ServerCore;
 import com.theprogrammingturkey.ggserver.ServerCore.Level;
-import com.theprogrammingturkey.ggserver.services.ServiceManager;
 
 public class SocketClient implements Runnable, ClientConnection
 {
@@ -69,30 +68,20 @@ public class SocketClient implements Runnable, ClientConnection
 					if(message.trim().equals(""))
 						continue;
 					JsonObject json = PARSER.parse(message).getAsJsonObject();
-					if(!json.has("purpose"))
+					if(!json.has("purpose") || !json.has("destination"))
 						continue;
+					String destination = json.get("destination").getAsString();
 					String purpose = json.get("purpose").getAsString();
 					if(purpose.equals("handshake"))
 					{
 						this.name = json.get("data").getAsJsonObject().get("name").getAsString();
 						ServerCore.output(Level.Info, "Pi Server", name + " has connected!");
 					}
-					else if(purpose.equals("message"))
-					{
-						ClientManager.sendClientMessage(json.get("destination").getAsString(), json.get("data").getAsJsonObject());
-					}
-					else if(purpose.equals("server"))
-					{
-						String action = json.get("data").getAsJsonObject().get("action").getAsString();
-						if(action.equalsIgnoreCase("TurkeyBot Restart"))
-						{
-							ServiceManager.restartService("turkeybot");
-						}
-					}
 					else if(purpose.equals("disconnect"))
 					{
 						running = false;
 					}
+					ClientManager.handlePacket(destination, purpose, json.get("data").getAsJsonObject());
 				} catch(Exception e)
 				{
 					e.printStackTrace();

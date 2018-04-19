@@ -15,12 +15,18 @@ public class ServiceManager
 	private static Map<String, IServiceCore> services = new HashMap<>();
 	private static Map<String, File> serviceFiles = new HashMap<>();
 
+	private static File configFolder;
+
 	public static void startServices()
 	{
+		configFolder = new File("config");
+		if(!configFolder.exists())
+			configFolder.mkdirs();
+
 		File servicesFolder = new File("services");
 		if(!servicesFolder.exists())
 			servicesFolder.mkdirs();
-		
+
 		for(File file : servicesFolder.listFiles())
 		{
 			if(getFileExtension(file.getName()).equalsIgnoreCase(".jar"))
@@ -79,7 +85,7 @@ public class ServiceManager
 			ServerCore.output(Level.Error, "Pi Server", "Unable to stop service with the id " + serviceID + ".");
 		}
 	}
-	
+
 	public static void restartService(String serviceName)
 	{
 		File file = serviceFiles.get(serviceName);
@@ -90,5 +96,10 @@ public class ServiceManager
 	private static String getFileExtension(String name)
 	{
 		return name.substring(name.lastIndexOf("."));
+	}
+
+	public static File getConfigFolder()
+	{
+		return configFolder;
 	}
 }

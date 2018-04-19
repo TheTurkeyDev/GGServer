@@ -6,6 +6,8 @@ import java.util.List;
 import com.google.gson.JsonObject;
 import com.theprogrammingturkey.ggserver.ServerCore.Level;
 import com.theprogrammingturkey.ggserver.client.ClientConnection;
+import com.theprogrammingturkey.ggserver.events.EventManager;
+import com.theprogrammingturkey.ggserver.services.ServiceManager;
 
 public class ClientManager
 {
@@ -56,9 +58,23 @@ public class ClientManager
 		client.sendMessage(message);
 	}
 
-	public static boolean isTurkeyBotConnected()
+	public static void handlePacket(String destination, String purpose, JsonObject data)
 	{
-		return getClientFromName("TurkeyBot") != null;
+		if(purpose.equals("message"))
+		{
+			ClientManager.sendClientMessage(destination, data);
+		}
+		else if(purpose.equals("server"))
+		{
+			if(data.get("action").getAsString().equalsIgnoreCase("Restart Service"))
+			{
+				ServiceManager.restartService(data.get("serviceID").getAsString());
+			}
+		}
+		else
+		{
+			EventManager.firePacketRecievedEvent(destination, data);
+		}
 	}
 
 	public static JsonObject getBaseJson(String purpose)
