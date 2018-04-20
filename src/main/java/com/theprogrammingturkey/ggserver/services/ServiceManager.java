@@ -46,7 +46,7 @@ public class ServiceManager
 			Properties properties = new Properties();
 			properties.load(loader.getResourceAsStream("plugin.properties"));
 
-			String classPath = properties.getProperty("Base Class Path");
+			String classPath = properties.getProperty("Base_Class_Path");
 
 			Class<?> clazz = Class.forName(classPath, true, loader);
 			Object instanceClazz = clazz.newInstance();
@@ -68,7 +68,7 @@ public class ServiceManager
 		} catch(Exception e)
 		{
 			ServerCore.output(Level.Error, "Pi Server", "Unable to start service " + file.getName() + ".");
-			ServerCore.output(Level.Error, "Pi Server", e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
