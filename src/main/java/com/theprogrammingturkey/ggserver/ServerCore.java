@@ -95,14 +95,11 @@ public class ServerCore extends CcsClient
 	{
 		CommandManager.registerCommand(new SimpleCommand("ping", "Ding Dong!", "/ping")
 		{
-
 			@Override
-			public boolean onCommand(String[] args)
+			public void onCommand(String[] args)
 			{
 				ServerCore.output(Level.Info, "Pi Server", "Pong!");
-				return true;
 			}
-
 		});
 
 		InputCheckThread input = new InputCheckThread();
