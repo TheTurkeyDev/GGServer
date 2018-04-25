@@ -67,7 +67,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>com.theprogrammingturkey.ggserver.ServerCore</mainClass>
+							<mainClass>com.theprogrammingturkey.ggserver.ServerLauncher</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
