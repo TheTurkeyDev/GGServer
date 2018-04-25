@@ -9,11 +9,24 @@ import java.util.Properties;
 import org.jivesoftware.smack.SmackException;
 
 import com.theprogrammingturkey.ggserver.ServerCore.Level;
+import com.theprogrammingturkey.ggserver.ui.UICore;
 
 public class ServerLauncher
 {
+	private static String[] folders = new String[] { "config", "services" };
+
 	public static void main(String[] args) throws SmackException, IOException
 	{
+		UICore.initUI();
+
+		File folderFile;
+		for(String folder : folders)
+		{
+			folderFile = new File(folder);
+			if(!folderFile.exists())
+				folderFile.mkdirs();
+		}
+
 		Properties properties = new Properties();
 		File file = new File("settings.prop");
 		if(!file.exists())

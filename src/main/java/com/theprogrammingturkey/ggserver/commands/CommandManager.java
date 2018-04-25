@@ -14,18 +14,18 @@ public class CommandManager
 
 	public static void registerCommand(ICommand command)
 	{
-		commandList.put(command.getCommandBase().toUpperCase(), command);
+		commandList.put(command.getCommandBase().toLowerCase(), command);
 	}
 
 	public static void registerCommandAlias(String command, String alias)
 	{
-		registerCommandAlias(commandList.get(command.toUpperCase()), alias);
+		registerCommandAlias(commandList.get(command.toLowerCase()), alias);
 	}
 
 	public static void registerCommandAlias(ICommand command, String alias)
 	{
 		if(command != null)
-			aliases.put(alias.toUpperCase(), command.getCommandBase());
+			aliases.put(alias.toLowerCase(), command.getCommandBase());
 	}
 
 	public static void processCommand(String command)
@@ -35,7 +35,7 @@ public class CommandManager
 			int firstSpace = command.indexOf(" ");
 			if(firstSpace == -1)
 				firstSpace = command.length();
-			String base = command.substring(1, firstSpace).toUpperCase();
+			String base = command.substring(1, firstSpace).toLowerCase();
 			String[] params;
 			if(firstSpace == command.length())
 				params = new String[0];
@@ -46,13 +46,13 @@ public class CommandManager
 			if(commandBase == null)
 				commandBase = base;
 
-			if(commandBase.equals("help"))
+			if(commandBase.equalsIgnoreCase("help"))
 			{
 				if(params.length > 0)
 				{
-					String helpComBase = aliases.get(params[0].toUpperCase());
+					String helpComBase = aliases.get(params[0].toLowerCase());
 					if(helpComBase == null)
-						helpComBase = params[0].toUpperCase();
+						helpComBase = params[0].toLowerCase();
 					if(commandList.containsKey(helpComBase))
 						ServerCore.output(Level.Info, "Pi Server", "Usage: " + commandList.get(helpComBase).getUsage());
 				}
@@ -61,15 +61,18 @@ public class CommandManager
 					ServerCore.output(Level.Info, "Pi Server", "Usage: /help [commandName]");
 				}
 			}
-			else if(commandBase.equals("commands"))
+			else if(commandBase.equalsIgnoreCase("commands"))
 			{
 				// TODO
 			}
-
-			if(commandList.containsKey(commandBase))
+			else if(commandList.containsKey(commandBase))
+			{
 				commandList.get(commandBase).onCommand(params);
+			}
 			else
-				ServerCore.output(Level.Error, "Pi Server", "Sorry, " + base + " is not a valid command!");
+			{
+				ServerCore.output(Level.Error, "Pi Server", "Sorry, /" + base + " is not a valid command!");
+			}
 		}
 	}
 }

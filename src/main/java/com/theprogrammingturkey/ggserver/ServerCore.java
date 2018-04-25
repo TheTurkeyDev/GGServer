@@ -13,8 +13,13 @@ import java.util.Locale;
 import com.theprogrammingturkey.ggserver.client.SocketClient;
 import com.theprogrammingturkey.ggserver.commands.CommandManager;
 import com.theprogrammingturkey.ggserver.commands.SimpleCommand;
+import com.theprogrammingturkey.ggserver.events.EventManager;
 import com.theprogrammingturkey.ggserver.services.ServiceManager;
+import com.theprogrammingturkey.ggserver.ui.UICore;
+import com.theprogrammingturkey.ggserver.util.JsonHelper;
+import com.wedevol.xmpp.bean.CcsInMessage;
 import com.wedevol.xmpp.server.CcsClient;
+import com.wedevol.xmpp.util.Util;
 
 public class ServerCore extends CcsClient
 {
@@ -55,23 +60,24 @@ public class ServerCore extends CcsClient
 		return true;
 	}
 
-	@Override
-	public void log(java.util.logging.Level level, String message)
-	{
-		output(Level.Info, "Pi Server", message);
-	}
-
 	public static void output(Level level, String sender, String message)
 	{
 		if(level == Level.DeBug && !debug)
 			return;
 
-		System.out.println("[" + dateFormatter.format(new Date()) + "][" + sender + "] [" + level.getLevel() + "]: " + message);
+		UICore.instance.consoleMessage("[" + dateFormatter.format(new Date()) + "][" + sender + "] [" + level.getLevel() + "]: " + message);
+	}
+
+	@Override
+	public void handlePacketRecieved(CcsInMessage packet)
+	{
+		EventManager.firePacketRecievedEvent(packet.getDataPayload().get("destination"), JsonHelper.getJsonFromMap(packet.getDataPayload()));
+		output(Level.Alert, "Pi Server", "Packet Recived! From:" + packet.getDataPayload().toString());
 	}
 
 	public static void sendFCMMessage(String message)
 	{
-		instance.sendPacket(message);
+		instance.sendDownstreamMessage(Util.getUniqueMessageId(), message);
 	}
 
 	public static enum Level

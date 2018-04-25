@@ -1,10 +1,12 @@
 package com.theprogrammingturkey.ggserver.client;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.google.gson.JsonObject;
 import com.theprogrammingturkey.ggserver.ServerCore;
-import com.theprogrammingturkey.ggserver.util.JsonHelper;
 import com.wedevol.xmpp.bean.CcsOutMessage;
-import com.wedevol.xmpp.server.MessageHelper;
+import com.wedevol.xmpp.util.MessageMapper;
 import com.wedevol.xmpp.util.Util;
 
 public class FirebaseClient implements ClientConnection
@@ -39,20 +41,20 @@ public class FirebaseClient implements ClientConnection
 	public void sendMessage(JsonObject data)
 	{
 		String messageId = Util.getUniqueMessageId();
-		JsonObject dataPayload = new JsonObject();
-		dataPayload.addProperty(Util.PAYLOAD_ATTRIBUTE_MESSAGE, data.toString());
+		Map<String, String> dataPayload = new HashMap<>();
+		dataPayload.put(Util.PAYLOAD_ATTRIBUTE_MESSAGE, data.toString());
 
-		CcsOutMessage message = new CcsOutMessage(clientID, messageId, JsonHelper.gsonToSimpleString(dataPayload));
+		CcsOutMessage message = new CcsOutMessage(clientID, messageId, dataPayload);
 
-		if (data.has("notification_title") && data.has("notification_body"))
+		if(data.has("notification_title") && data.has("notification_body"))
 		{
-			JsonObject notificationPayload = new JsonObject();
-			notificationPayload.addProperty("title", data.get("notification_title").getAsString());
-			notificationPayload.addProperty("body", data.get("notification_body").getAsString());
-			message.setNotificationPayload(JsonHelper.gsonToSimpleString(notificationPayload));
+			Map<String, String> notificationPayload = new HashMap<>();
+			notificationPayload.put("title", data.get("notification_title").getAsString());
+			notificationPayload.put("body", data.get("notification_body").getAsString());
+			message.setNotificationPayload(notificationPayload);
 		}
 
-		ServerCore.sendFCMMessage(MessageHelper.createJsonOutMessage(message));
+		ServerCore.sendFCMMessage(MessageMapper.toJsonString(message));
 	}
 
 	@Override

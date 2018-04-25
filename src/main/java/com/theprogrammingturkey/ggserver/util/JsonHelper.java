@@ -1,22 +1,33 @@
 package com.theprogrammingturkey.ggserver.util;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
-import org.json.simple.JSONValue;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
 public class JsonHelper
 {
+	private static final JsonParser PARSER = new JsonParser();
+	private static final ObjectMapper mapper = new ObjectMapper();
+
 	@SuppressWarnings("unchecked")
 	public static Map<String, Object> gsonToSimpleObject(JsonElement json)
 	{
-		return (Map<String, Object>) JSONValue.parse(json.toString());
+		try
+		{
+			return mapper.readValue(json.toString(), HashMap.class);
+		} catch(IOException e)
+		{
+			e.printStackTrace();
+			return null;
+		}
 	}
 
-	@SuppressWarnings("unchecked")
-	public static Map<String, String> gsonToSimpleString(JsonElement json)
+	public static JsonElement getJsonFromMap(Map<String, String> jsonMap)
 	{
-		return (Map<String, String>) JSONValue.parse(json.toString());
+		return PARSER.parse(jsonMap.toString());
 	}
 }
