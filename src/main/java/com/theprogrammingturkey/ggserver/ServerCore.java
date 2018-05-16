@@ -1,9 +1,7 @@
 package com.theprogrammingturkey.ggserver;
 
-import java.io.BufferedReader;
 import java.io.EOFException;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
@@ -107,47 +105,6 @@ public class ServerCore extends CcsClient
 				ServerCore.output(Level.Info, "Pi Server", "Pong!");
 			}
 		});
-
-		InputCheckThread input = new InputCheckThread();
-		input.init();
-	}
-
-	private class InputCheckThread implements Runnable
-	{
-		private boolean run = false;
-		private Thread thread;
-
-		public void init()
-		{
-			run = true;
-			if(thread == null || !thread.isAlive())
-			{
-				thread = new Thread(this);
-				thread.start();
-			}
-		}
-
-		public void run()
-		{
-			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-			while(run)
-			{
-				try
-				{
-					CommandManager.processCommand(br.readLine());
-				} catch(IOException e)
-				{
-					e.printStackTrace();
-				}
-			}
-			try
-			{
-				thread.interrupt();
-				thread.join();
-			} catch(InterruptedException e)
-			{
-			}
-		}
 	}
 
 	private static class SocketManager implements Runnable
