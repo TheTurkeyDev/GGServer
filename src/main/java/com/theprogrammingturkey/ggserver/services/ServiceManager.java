@@ -13,9 +13,7 @@ import com.theprogrammingturkey.ggserver.ServerCore.Level;
 
 public class ServiceManager
 {
-	private static Map<String, IServiceCore> services = new HashMap<>();
-	private static Map<String, ServiceStatus> serviceStatus = new HashMap<>();
-	private static Map<String, File> serviceFiles = new HashMap<>();
+	private static Map<String, ActiveServiceWrapper> services = new HashMap<>();
 
 	private static File configFolder;
 
@@ -46,17 +44,14 @@ public class ServiceManager
 
 			Class<?> clazz = Class.forName(classPath, true, loader);
 			Object instanceClazz = clazz.newInstance();
-			// static call
 			if(instanceClazz instanceof IServiceCore)
 			{
 				IServiceCore service = (IServiceCore) instanceClazz;
 				service.init();
-				String name = service.getServiceID();
-				serviceStatus.put(name, ServiceStatus.STARTING);
-				services.put(name, service);
-				serviceFiles.put(name, file);
+				ActiveServiceWrapper wrapper = new ActiveServiceWrapper(service, ServiceStatus.STARTING, file);
+				services.put(service.getServiceID(), wrapper);
 				ServerCore.output(Level.Info, "Pi Server", "Started Service " + service.getServiceName() + " from file " + file.getName());
-				serviceStatus.put(name, ServiceStatus.RUNNING);
+				wrapper.setServiceStatus(ServiceStatus.RUNNING);
 			}
 			else
 			{
@@ -72,31 +67,35 @@ public class ServiceManager
 
 	public static void stopService(String serviceID)
 	{
-		serviceStatus.put(serviceID, ServiceStatus.STOPPING);
-		try
+		ActiveServiceWrapper wrapper = services.get(serviceID);
+		if(wrapper != null)
 		{
-			services.get(serviceID).stop();
-			IServiceCore service = services.remove(serviceID);
-			serviceFiles.remove(serviceID);
-			ServerCore.output(Level.Info, "Pi Server", service.getServiceName() + " Stopped.");
-			serviceStatus.put(serviceID, ServiceStatus.STOPPED);
-		} catch(Exception e)
-		{
-			serviceStatus.put(serviceID, ServiceStatus.ERRORED);
-			ServerCore.output(Level.Error, "Pi Server", "Unable to stop service with the id " + serviceID + ".");
+			ServerCore.output(Level.Info, "Pi Server", wrapper.getService().getServiceName() + " Stopped.");
+			wrapper.setServiceStatus(ServiceStatus.STOPPED);
 		}
+		else
+		{
+			ServerCore.output(Level.Error, "Pi Server", "Attempted to stop a service with the id '" + serviceID + "', but it does not exsist.");
+		}
+
 	}
 
 	public static void restartService(String serviceID)
 	{
-		File file = serviceFiles.get(serviceID);
-		ServiceManager.stopService(serviceID);
-		ServiceManager.startService(file);
+		if(services.containsKey(serviceID))
+		{
+			ServiceManager.stopService(serviceID);
+			ServiceManager.startService(services.get(serviceID).getServiceFile());
+		}
+		else
+		{
+			ServerCore.output(Level.Error, "Pi Server", "Attempted to restart a service with the id '" + serviceID + "', but it does not exsist.");
+		}
 	}
 
 	public static IServiceCore getServiceFromID(String id)
 	{
-		return services.get(id);
+		return services.get(id).getService();
 	}
 
 	public static Set<String> getServices()
@@ -106,12 +105,12 @@ public class ServiceManager
 
 	public static void setServiceStatus(String serviceID, ServiceStatus status)
 	{
-		serviceStatus.put(serviceID, status);
+		services.get(serviceID).setServiceStatus(status);
 	}
 
 	public static ServiceStatus getServiceStatus(String serviceID)
 	{
-		return serviceStatus.get(serviceID);
+		return services.get(serviceID).getServiceStatus();
 	}
 
 	private static String getFileExtension(String name)
