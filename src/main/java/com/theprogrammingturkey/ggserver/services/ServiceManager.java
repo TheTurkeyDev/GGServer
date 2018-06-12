@@ -11,30 +11,24 @@ import java.util.Set;
 import com.theprogrammingturkey.ggserver.ServerCore;
 import com.theprogrammingturkey.ggserver.ServerCore.Level;
 
-public class ServiceManager
-{
+public class ServiceManager {
 	private static Map<String, ActiveServiceWrapper> services = new HashMap<>();
 
 	private static File configFolder;
 
-	public static void startServices()
-	{
+	public static void startServices() {
 		configFolder = new File("config");
 
-		for(File file : new File("services").listFiles())
-		{
-			if(getFileExtension(file.getName()).equalsIgnoreCase(".jar"))
-			{
+		for (File file : new File("services").listFiles()) {
+			if (getFileExtension(file.getName()).equalsIgnoreCase(".jar")) {
 				startService(file);
 			}
 		}
 	}
 
-	public static void startService(File file)
-	{
+	public static void startService(File file) {
 		ServerCore.output(Level.Info, "Pi Server", "Starting Service from file" + file.getName() + "...");
-		try
-		{
+		try {
 			URLClassLoader loader = new URLClassLoader(new URL[] { file.toURI().toURL() });
 
 			Properties properties = new Properties();
@@ -44,87 +38,68 @@ public class ServiceManager
 
 			Class<?> clazz = Class.forName(classPath, true, loader);
 			Object instanceClazz = clazz.newInstance();
-			if(instanceClazz instanceof IServiceCore)
-			{
+			if (instanceClazz instanceof IServiceCore) {
 				IServiceCore service = (IServiceCore) instanceClazz;
 				service.init();
 				ActiveServiceWrapper wrapper = new ActiveServiceWrapper(service, ServiceStatus.STARTING, file);
 				services.put(service.getServiceID(), wrapper);
 				ServerCore.output(Level.Info, "Pi Server", "Started Service " + service.getServiceName() + " from file " + file.getName());
 				wrapper.setServiceStatus(ServiceStatus.RUNNING);
-			}
-			else
-			{
+			} else {
 				ServerCore.output(Level.Error, "Pi Server", "Unable to start service from file " + file.getName() + "! Core class does not implement IServiceCore!");
 			}
 
-		} catch(Exception e)
-		{
+		} catch (Exception e) {
 			ServerCore.output(Level.Error, "Pi Server", "Unable to start service " + file.getName() + ".");
 			e.printStackTrace();
 		}
 	}
 
-	public static void stopService(String serviceID)
-	{
+	public static void stopService(String serviceID) {
 		ActiveServiceWrapper wrapper = services.get(serviceID);
-		if(wrapper != null)
-		{
+		if (wrapper != null) {
 			ServerCore.output(Level.Info, "Pi Server", wrapper.getService().getServiceName() + " Stopped.");
 			wrapper.setServiceStatus(ServiceStatus.STOPPED);
-		}
-		else
-		{
+		} else {
 			ServerCore.output(Level.Error, "Pi Server", "Attempted to stop a service with the id '" + serviceID + "', but it does not exsist.");
 		}
 
 	}
 
-	public static void restartService(String serviceID)
-	{
-		if(services.containsKey(serviceID))
-		{
+	public static void restartService(String serviceID) {
+		if (services.containsKey(serviceID)) {
 			ServiceManager.stopService(serviceID);
 			ServiceManager.startService(services.get(serviceID).getServiceFile());
-		}
-		else
-		{
+		} else {
 			ServerCore.output(Level.Error, "Pi Server", "Attempted to restart a service with the id '" + serviceID + "', but it does not exsist.");
 		}
 	}
 
-	public static IServiceCore getServiceFromID(String id)
-	{
+	public static IServiceCore getServiceFromID(String id) {
 		return services.get(id).getService();
 	}
 
-	public static Set<String> getServices()
-	{
+	public static Set<String> getServices() {
 		return services.keySet();
 	}
 
-	public static void setServiceStatus(String serviceID, ServiceStatus status)
-	{
+	public static void setServiceStatus(String serviceID, ServiceStatus status) {
 		services.get(serviceID).setServiceStatus(status);
 	}
 
-	public static ServiceStatus getServiceStatus(String serviceID)
-	{
+	public static ServiceStatus getServiceStatus(String serviceID) {
 		return services.get(serviceID).getServiceStatus();
 	}
 
-	private static String getFileExtension(String name)
-	{
+	private static String getFileExtension(String name) {
 		return name.substring(name.lastIndexOf("."));
 	}
 
-	public static File getConfigFolder()
-	{
+	public static File getConfigFolder() {
 		return configFolder;
 	}
 
-	public enum ServiceStatus
-	{
+	public enum ServiceStatus {
 		STOPPED, RUNNING, STOPPING, STARTING, ERRORED;
 	}
 }

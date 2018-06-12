@@ -35,5 +35,4 @@ public abstract class SimpleCommand implements ICommand
 	{
 		return usage;
 	}
-
 }

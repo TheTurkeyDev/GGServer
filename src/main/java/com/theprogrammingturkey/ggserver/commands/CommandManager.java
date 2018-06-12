@@ -1,6 +1,9 @@
 package com.theprogrammingturkey.ggserver.commands;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.theprogrammingturkey.ggserver.ServerCore;
@@ -46,7 +49,7 @@ public class CommandManager
 			if(commandBase == null)
 				commandBase = base;
 
-			if(commandBase.equalsIgnoreCase("help"))
+			if(commandBase.equalsIgnoreCase("help") || commandBase.equalsIgnoreCase("h"))
 			{
 				if(params.length > 0)
 				{
@@ -63,7 +66,60 @@ public class CommandManager
 			}
 			else if(commandBase.equalsIgnoreCase("commands"))
 			{
-				// TODO
+				int page = 1;
+				if(params.length > 0)
+				{
+					try {
+						page = Integer.parseInt(params[0]);
+					}catch(Exception e) {
+						ServerCore.output(Level.Error, "Pi Server", params[0] +  "is not a valid number!");
+						return;
+					}
+				}
+				
+				List<String> commands = new ArrayList<String>(commandList.keySet());
+				commands.sort(new Comparator<String>() {
+
+					@Override
+					public int compare(String s1, String s2) {
+						return s1.compareTo(s2);
+					}
+					
+				});
+					
+				if((page - 1) * 10 >= commands.size())
+				{
+					page = (commands.size() - 1) / 10 + 1;
+				}
+				
+				StringBuilder builder = new StringBuilder();
+				builder.append("\n");
+				builder.append("====== COMMANDS LIST ======");
+				builder.append("\n");
+				builder.append("====== Page ");
+				builder.append(page);
+				builder.append("/");
+				builder.append((commands.size() - 1) / 10 + 1);
+				builder.append(" ======");
+				builder.append("\n");
+				ICommand com;
+				for(int i = (10 * (page - 1)) ; i < 10 * page ; i++)
+				{
+					if(i >= commands.size())
+						break;
+					
+					builder.append("- ");
+					builder.append(commands.get(i));
+					builder.append("\n");
+					builder.append("\t Description: ");
+					com = commandList.get(commands.get(i));
+					builder.append(com.getDescription());
+					builder.append("\n");
+					builder.append("\t Usage: ");
+					builder.append(com.getUsage());
+				}
+				
+				ServerCore.output(Level.Error, "Pi Server", builder.toString());
 			}
 			else if(commandList.containsKey(commandBase))
 			{

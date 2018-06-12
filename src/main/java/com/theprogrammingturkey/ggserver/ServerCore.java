@@ -8,6 +8,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.theprogrammingturkey.ggserver.client.SocketClient;
 import com.theprogrammingturkey.ggserver.commands.CommandManager;
 import com.theprogrammingturkey.ggserver.commands.SimpleCommand;
@@ -27,7 +30,9 @@ public class ServerCore extends CcsClient
 	private Thread socketThread;
 
 	private static ServerCore instance;
-
+	
+	protected static final Logger logger = LoggerFactory.getLogger("PI Server");
+	 
 	public ServerCore(String projectId, String apiKey)
 	{
 		super(projectId, apiKey, debug);
@@ -36,8 +41,8 @@ public class ServerCore extends CcsClient
 		if(connectToFirebase())
 			output(Level.Info, "Pi Server", "Firebase Connected!");
 		output(Level.Info, "Pi Server", "Starting Server...");
-		socketThread = new Thread(new SocketManager());
-		socketThread.start();
+		//socketThread = new Thread(new SocketManager());
+		//socketThread.start();
 		output(Level.Info, "Pi Server", "Server Started!");
 		output(Level.Info, "Pi Server", "Loading Services...");
 		ServiceManager.startServices();
@@ -63,7 +68,7 @@ public class ServerCore extends CcsClient
 		if(level == Level.DeBug && !debug)
 			return;
 
-		UICore.instance.consoleMessage("[" + dateFormatter.format(new Date()) + "][" + sender + "] [" + level.getLevel() + "]: " + message);
+		UICore.getInstance().consoleMessage("[" + dateFormatter.format(new Date()) + "][" + sender + "] [" + level.getLevel() + "]: " + message);
 	}
 
 	@Override

@@ -21,7 +21,7 @@ public class UICore extends JFrame
 {
 	private static final long serialVersionUID = 1L;
 
-	public static UICore instance = null;
+	private static UICore instance = null;
 
 	private JTextArea console;
 	private JTextField input;
