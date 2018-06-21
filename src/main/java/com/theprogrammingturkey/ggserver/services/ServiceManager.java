@@ -25,14 +25,14 @@ public class ServiceManager
 		{
 			if(getFileExtension(file.getName()).equalsIgnoreCase(".jar"))
 			{
-				startService(file);
+				loadService(file);
 			}
 		}
 	}
 
-	public static void startService(File file)
+	public static void loadService(File file)
 	{
-		ServerCore.output(Level.Info, "Pi Server", "Starting Service from file" + file.getName() + "...");
+		ServerCore.output(Level.Info, "Pi Server", "Starting Service from file " + file.getName() + "...");
 		try
 		{
 			URLClassLoader loader = new URLClassLoader(new URL[] { file.toURI().toURL() });
@@ -58,7 +58,7 @@ public class ServiceManager
 					ServerCore.output(Level.Error, "Pi Server", "Service " + service.getServiceName() + " failed to start from file " + file.getName());
 					ServerCore.output(Level.Error, "Pi Server", e.getMessage());
 					e.printStackTrace();
-					wrapper.setServiceStatus(ServiceStatus.STOPPED);
+					wrapper.setServiceStatus(ServiceStatus.ERRORED);
 				} finally
 				{
 					services.put(service.getServiceID(), wrapper);
@@ -81,8 +81,12 @@ public class ServiceManager
 		if(services.containsKey(serviceID))
 		{
 			ActiveServiceWrapper service = services.get(serviceID);
-			if(service.getServiceStatus().equals(ServiceStatus.RUNNING))
-				ServiceManager.startService(service.getServiceFile());
+			if(service.getServiceStatus().equals(ServiceStatus.STOPPED))
+			{
+				service.setServiceStatus(ServiceStatus.STARTING);
+				service.getService().init();
+				service.setServiceStatus(ServiceStatus.RUNNING);
+			}
 		}
 	}
 
@@ -91,8 +95,13 @@ public class ServiceManager
 		ActiveServiceWrapper wrapper = services.get(serviceID);
 		if(wrapper != null)
 		{
-			ServerCore.output(Level.Info, "Pi Server", wrapper.getService().getServiceName() + " Stopped.");
-			wrapper.setServiceStatus(ServiceStatus.STOPPED);
+			if(wrapper.getServiceStatus().equals(ServiceStatus.RUNNING))
+			{
+				wrapper.setServiceStatus(ServiceStatus.STOPPING);
+				wrapper.getService().stop();
+				ServerCore.output(Level.Info, "Pi Server", wrapper.getService().getServiceName() + " Stopped.");
+				wrapper.setServiceStatus(ServiceStatus.STOPPED);
+			}
 		}
 		else
 		{
@@ -106,7 +115,7 @@ public class ServiceManager
 		if(services.containsKey(serviceID))
 		{
 			ServiceManager.stopService(serviceID);
-			ServiceManager.startService(services.get(serviceID).getServiceFile());
+			ServiceManager.startService(serviceID);
 		}
 		else
 		{
@@ -116,7 +125,9 @@ public class ServiceManager
 
 	public static IServiceCore getServiceFromID(String id)
 	{
-		return services.get(id).getService();
+		if(services.containsKey(id))
+			return services.get(id).getService();
+		return null;
 	}
 
 	public static Set<String> getServices()

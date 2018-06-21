@@ -19,7 +19,6 @@ import javax.swing.event.ListSelectionListener;
 
 import com.theprogrammingturkey.ggserver.commands.CommandManager;
 import com.theprogrammingturkey.ggserver.services.ActiveServiceWrapper;
-import com.theprogrammingturkey.ggserver.services.IServiceCore;
 import com.theprogrammingturkey.ggserver.services.ServiceManager;
 
 public class UICore extends JFrame implements ActionListener
@@ -54,18 +53,18 @@ public class UICore extends JFrame implements ActionListener
 
 		JPanel panel = new JPanel();
 		panel.setLayout(null);
-		panel.setSize(600, 400);
+		panel.setSize(800, 400);
 		panel.setBackground(Color.GRAY);
 
 		console = new JTextArea();
 		console.setEditable(false);
 		console.setWrapStyleWord(true);
-		console.setSize(400, 300);
+		console.setSize(500, 310);
 		console.setLocation(10, 10);
 		console.setBackground(Color.BLACK);
 		console.setForeground(Color.GREEN);
 		JScrollPane sp = new JScrollPane(console);
-		sp.setSize(400, 300);
+		sp.setSize(500, 310);
 		sp.setLocation(10, 10);
 		panel.add(sp);
 		input = new JTextField();
@@ -74,7 +73,7 @@ public class UICore extends JFrame implements ActionListener
 		input.setBackground(Color.BLACK);
 		input.setForeground(Color.GREEN);
 		input.setLocation(10, 325);
-		input.setSize(400, 25);
+		input.setSize(500, 25);
 		input.addKeyListener(new KeyAdapter()
 		{
 			public void keyPressed(KeyEvent e)
@@ -91,11 +90,10 @@ public class UICore extends JFrame implements ActionListener
 		services = new JList<ActiveServiceWrapper>(displayedServices);
 		services.setBackground(Color.BLACK);
 		services.setForeground(Color.GREEN);
-		services.setLocation(425, 80);
-		services.setSize(150, 270);
+		services.setLocation(525, 80);
+		services.setSize(250, 270);
 		services.addListSelectionListener(new ListSelectionListener()
 		{
-
 			@Override
 			public void valueChanged(ListSelectionEvent e)
 			{
@@ -106,23 +104,20 @@ public class UICore extends JFrame implements ActionListener
 					switch(ServiceManager.getServiceStatus(id))
 					{
 						case RUNNING:
-							start.setVisible(false);
-							stop.setVisible(true);
-							restart.setVisible(true);
+							start.setEnabled(false);
+							stop.setEnabled(true);
+							restart.setEnabled(true);
 							break;
 						case STOPPED:
 							start.setEnabled(true);
-							start.setVisible(true);
-							stop.setVisible(false);
-							restart.setVisible(false);
+							stop.setEnabled(false);
+							restart.setEnabled(false);
 							break;
 						default:
 							start.setEnabled(false);
-							start.setVisible(true);
-							stop.setVisible(false);
-							restart.setVisible(false);
+							stop.setEnabled(false);
+							restart.setEnabled(false);
 							break;
-
 					}
 				}
 			}
@@ -131,30 +126,30 @@ public class UICore extends JFrame implements ActionListener
 		panel.add(services);
 
 		start = new JButton("Start");
-		start.setLocation(450, 10);
+		start.setLocation(550, 10);
 		start.setSize(100, 25);
 		start.setEnabled(false);
 		start.addActionListener(this);
 		panel.add(start);
 
 		stop = new JButton("Stop");
-		stop.setLocation(450, 10);
+		stop.setLocation(675, 10);
 		stop.setSize(100, 25);
-		stop.setVisible(false);
+		stop.setEnabled(false);
 		stop.addActionListener(this);
 		panel.add(stop);
 
 		restart = new JButton("Restart");
-		restart.setLocation(450, 40);
+		restart.setLocation(610, 40);
 		restart.setSize(100, 25);
-		restart.setVisible(false);
+		restart.setEnabled(false);
 		restart.addActionListener(this);
 		panel.add(restart);
 
 		this.add(panel);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setTitle("GG Server");
-		this.setSize(600, 400);
+		this.setSize(800, 400);
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 	}
@@ -175,6 +170,10 @@ public class UICore extends JFrame implements ActionListener
 		{
 			ServiceManager.restartService(id);
 		}
+		start.setEnabled(false);
+		stop.setEnabled(false);
+		restart.setEnabled(false);
+		services.updateUI();
 	}
 
 	public void consoleMessage(String message)
@@ -186,5 +185,7 @@ public class UICore extends JFrame implements ActionListener
 	{
 		if(!displayedServices.contains(service))
 			displayedServices.addElement(service);
+			
+		services.updateUI();
 	}
 }
