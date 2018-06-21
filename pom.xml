@@ -5,7 +5,7 @@
 
 	<groupId>com.theprogrammingturkey.ggserver</groupId>
 	<artifactId>GGServer</artifactId>
-	<version>0.2.0.${build.number}</version>
+	<version>0.3.0.${build.number}</version>
 	<packaging>jar</packaging>
 	<distributionManagement>
 		<repository>
@@ -14,7 +14,6 @@
 			<url>${mavendir}</url>
 		</repository>
 	</distributionManagement>
-
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.version>1.8</jdk.version>
@@ -22,6 +21,10 @@
 		<json-simple.version>1.1.1</json-simple.version>
 	</properties>
 	<repositories>
+		<repository>
+        	<id>maven-central</id>
+        	<url>http://repo1.maven.org/maven2</url>
+    	</repository>
 		<repository>
 			<snapshots>
 				<enabled>false</enabled>
@@ -49,7 +52,6 @@
 			<version>0.1.2.22</version>
 		</dependency>
 	</dependencies>
-
 	<build>
 		<plugins>
 			<!-- Set a JDK compiler level -->

@@ -30,26 +30,13 @@ public class CommandManager
 		if(command != null)
 			aliases.put(alias.toLowerCase(), command.getCommandBase());
 	}
-
-	public static void processCommand(String command)
+	
+	public static void registerDefaultCommands()
 	{
-		if(command.length() > 0 && command.charAt(0) == '/')
+		registerCommand(new SimpleCommand("help", "Command help", "/help <command>")
 		{
-			int firstSpace = command.indexOf(" ");
-			if(firstSpace == -1)
-				firstSpace = command.length();
-			String base = command.substring(1, firstSpace).toLowerCase();
-			String[] params;
-			if(firstSpace == command.length())
-				params = new String[0];
-			else
-				params = command.substring(firstSpace + 1).split(" ");
-
-			String commandBase = aliases.get(base);
-			if(commandBase == null)
-				commandBase = base;
-
-			if(commandBase.equalsIgnoreCase("help") || commandBase.equalsIgnoreCase("h"))
+			@Override
+			public void onCommand(String[] params)
 			{
 				if(params.length > 0)
 				{
@@ -64,7 +51,22 @@ public class CommandManager
 					ServerCore.output(Level.Info, "Pi Server", "Usage: /help [commandName]");
 				}
 			}
-			else if(commandBase.equalsIgnoreCase("commands"))
+		});
+		registerCommandAlias("help", "h");
+		
+		registerCommand(new SimpleCommand("stop", "Stop and exit the server safely", "/stop")
+		{
+			@Override
+			public void onCommand(String[] args)
+			{	
+				ServerCore.StopServer();
+			}
+		});
+		
+		registerCommand(new SimpleCommand("commands", "List available commands", "/commands [page]")
+		{
+			@Override
+			public void onCommand(String[] params)
 			{
 				int page = 1;
 				if(params.length > 0)
@@ -117,11 +119,42 @@ public class CommandManager
 					builder.append("\n");
 					builder.append("\t Usage: ");
 					builder.append(com.getUsage());
+					builder.append("\n");
 				}
 				
 				ServerCore.output(Level.Error, "Pi Server", builder.toString());
 			}
-			else if(commandList.containsKey(commandBase))
+		});
+		
+		registerCommand(new SimpleCommand("ping", "Ding Dong!", "/ping")
+		{
+			@Override
+			public void onCommand(String[] args)
+			{
+				ServerCore.output(Level.Info, "Pi Server", "Pong!");
+			}
+		});
+	}
+
+	public static void processCommand(String command)
+	{
+		if(command.length() > 0 && command.charAt(0) == '/')
+		{
+			int firstSpace = command.indexOf(" ");
+			if(firstSpace == -1)
+				firstSpace = command.length();
+			String base = command.substring(1, firstSpace).toLowerCase();
+			String[] params;
+			if(firstSpace == command.length())
+				params = new String[0];
+			else
+				params = command.substring(firstSpace + 1).split(" ");
+
+			String commandBase = aliases.get(base);
+			if(commandBase == null)
+				commandBase = base;
+
+			if(commandList.containsKey(commandBase))
 			{
 				commandList.get(commandBase).onCommand(params);
 			}

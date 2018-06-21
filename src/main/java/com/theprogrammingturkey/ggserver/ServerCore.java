@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import com.theprogrammingturkey.ggserver.client.SocketClient;
 import com.theprogrammingturkey.ggserver.commands.CommandManager;
-import com.theprogrammingturkey.ggserver.commands.SimpleCommand;
 import com.theprogrammingturkey.ggserver.events.EventManager;
 import com.theprogrammingturkey.ggserver.services.ServiceManager;
 import com.theprogrammingturkey.ggserver.ui.UICore;
@@ -47,7 +46,7 @@ public class ServerCore extends CcsClient
 		output(Level.Info, "Pi Server", "Loading Services...");
 		ServiceManager.startServices();
 		output(Level.Info, "Pi Server", "Services Loaded!");
-		initConsoleUnput();
+		CommandManager.registerDefaultCommands();
 	}
 
 	public boolean connectToFirebase()
@@ -82,6 +81,19 @@ public class ServerCore extends CcsClient
 	{
 		instance.sendDownstreamMessage(Util.getUniqueMessageId(), message);
 	}
+	
+	public static void StopServer()
+	{
+		output(Level.Info, "Pi Server", "Stopping...");
+		for(String s: ServiceManager.getServices())
+			ServiceManager.stopService(s);
+		
+		instance.disconnectGracefully();
+		
+		while(instance.isAlive()){};
+		
+		System.exit(1);
+	}
 
 	public static enum Level
 	{
@@ -98,18 +110,6 @@ public class ServerCore extends CcsClient
 		{
 			return this.level;
 		}
-	}
-
-	private void initConsoleUnput()
-	{
-		CommandManager.registerCommand(new SimpleCommand("ping", "Ding Dong!", "/ping")
-		{
-			@Override
-			public void onCommand(String[] args)
-			{
-				ServerCore.output(Level.Info, "Pi Server", "Pong!");
-			}
-		});
 	}
 
 	private static class SocketManager implements Runnable

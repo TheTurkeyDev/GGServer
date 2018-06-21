@@ -47,3 +47,5 @@ tmp
 /dist/
 
 settings.prop
+config/
+services/
