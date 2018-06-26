@@ -15,9 +15,20 @@ public class ServerLauncher
 {
 	private static String[] folders = new String[] { "config", "services" };
 
-	public static void main(String[] args) throws SmackException, IOException
+	public static void main(String[] args) throws SmackException, IOException, InterruptedException
 	{
-		UICore.initUI();
+		// TODO: Idk what the best way is, but this works for now
+		new Thread(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				UICore.init(args);
+			}
+		}).start();
+
+		// TODO: Don't do this
+		Thread.sleep(3000);
 
 		File folderFile;
 		for(String folder : folders)

@@ -23,11 +23,6 @@ public class ActiveServiceWrapper
 		return service;
 	}
 
-	public ServiceStatus getServiceStatus()
-	{
-		return serviceStatus;
-	}
-
 	public File getServiceFile()
 	{
 		return serviceFile;
@@ -38,9 +33,24 @@ public class ActiveServiceWrapper
 		return this.service.getServiceID();
 	}
 
+	public String getServiceName()
+	{
+		return this.service.getServiceName();
+	}
+
+	public String getServiceStatusString()
+	{
+		return serviceStatus.name();
+	}
+
+	public ServiceStatus getServiceStatus()
+	{
+		return serviceStatus;
+	}
+
 	public void setServiceStatus(ServiceStatus status)
 	{
-		UICore.getInstance().updateService(this);
+		UICore.updateService(this);
 		this.serviceStatus = status;
 	}
 

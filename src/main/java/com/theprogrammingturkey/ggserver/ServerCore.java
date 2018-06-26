@@ -11,6 +11,7 @@ import java.util.Locale;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gson.JsonObject;
 import com.theprogrammingturkey.ggserver.client.SocketClient;
 import com.theprogrammingturkey.ggserver.commands.CommandManager;
 import com.theprogrammingturkey.ggserver.events.EventManager;
@@ -29,9 +30,9 @@ public class ServerCore extends CcsClient
 	private Thread socketThread;
 
 	private static ServerCore instance;
-	
+
 	protected static final Logger logger = LoggerFactory.getLogger("PI Server");
-	 
+
 	public ServerCore(String projectId, String apiKey)
 	{
 		super(projectId, apiKey, debug);
@@ -40,8 +41,8 @@ public class ServerCore extends CcsClient
 		if(connectToFirebase())
 			output(Level.Info, "Pi Server", "Firebase Connected!");
 		output(Level.Info, "Pi Server", "Starting Server...");
-		//socketThread = new Thread(new SocketManager());
-		//socketThread.start();
+		// socketThread = new Thread(new SocketManager());
+		// socketThread.start();
 		output(Level.Info, "Pi Server", "Server Started!");
 		output(Level.Info, "Pi Server", "Loading Services...");
 		ServiceManager.startServices();
@@ -54,6 +55,16 @@ public class ServerCore extends CcsClient
 		try
 		{
 			super.connect();
+			JsonObject json = new JsonObject();
+			json.addProperty("to", "dlkPv5MBWhY:APA91bEFT4TvYtEnIea-ZVTP-ugyuGkjgzcdnMR6kicRvcegCwTBVv10mitD_MyETzYqA8AIZXBFRto1-7a5o6K1iZEgZpMzIV5xRDlupUJpVsqoe_4NgFDPDU3vneYDhsyFLyK4DgrN");
+			String messageID = Util.getUniqueMessageId();
+			json.addProperty("message_id", messageID);
+			JsonObject notification = new JsonObject();
+			notification.addProperty("title", "Server Online!");
+			notification.addProperty("body", "boop");
+			json.add("notification", notification);
+			json.addProperty("time_to_live", 600);
+			super.sendDownstreamMessage(messageID, json.toString());
 		} catch(Exception e)
 		{
 			e.printStackTrace();
@@ -67,7 +78,7 @@ public class ServerCore extends CcsClient
 		if(level == Level.DeBug && !debug)
 			return;
 
-		UICore.getInstance().consoleMessage("[" + dateFormatter.format(new Date()) + "][" + sender + "] [" + level.getLevel() + "]: " + message);
+		UICore.consoleMessage("[" + dateFormatter.format(new Date()) + "][" + sender + "] [" + level.getLevel() + "]: " + message);
 	}
 
 	@Override
@@ -81,17 +92,20 @@ public class ServerCore extends CcsClient
 	{
 		instance.sendDownstreamMessage(Util.getUniqueMessageId(), message);
 	}
-	
+
 	public static void StopServer()
 	{
 		output(Level.Info, "Pi Server", "Stopping...");
-		for(String s: ServiceManager.getServices())
+		for(String s : ServiceManager.getServices())
 			ServiceManager.stopService(s);
-		
+
 		instance.disconnectGracefully();
-		
-		while(instance.isAlive()){};
-		
+
+		while(instance.isAlive())
+		{
+		}
+		;
+
 		System.exit(1);
 	}
 

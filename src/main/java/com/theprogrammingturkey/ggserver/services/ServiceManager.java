@@ -85,6 +85,7 @@ public class ServiceManager
 			{
 				service.setServiceStatus(ServiceStatus.STARTING);
 				service.getService().init();
+				ServerCore.output(Level.Info, "Pi Server", service.getServiceName() + " Started.");
 				service.setServiceStatus(ServiceStatus.RUNNING);
 			}
 		}
