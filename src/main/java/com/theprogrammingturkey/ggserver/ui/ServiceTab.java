@@ -17,7 +17,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.TilePane;
+import javafx.scene.layout.VBox;
 
 public class ServiceTab extends Tab
 {
@@ -59,16 +59,15 @@ public class ServiceTab extends Tab
 		table.setItems(displayedServices);
 		table.getColumns().addAll(nameCol, idCol, statusCol);
 
-		TilePane buttonPane = new TilePane();
+		VBox buttonPane = new VBox();
 		buttonPane.setPadding(new Insets(0, 10, 0, 10));
-		buttonPane.setVgap(10);
-		buttonPane.setPrefColumns(1);
+		buttonPane.setSpacing(10);
 		buttonPane.setAlignment(Pos.CENTER);
 
 		start = new Button("Start");
 		start.setMinWidth(100);
 		start.setDisable(true);
-		//TODO: Take these off of the UI Thread
+		// TODO: Take these off of the UI Thread
 		start.setOnAction(e -> {
 			if(table.getSelectionModel().getSelectedItem() != null)
 				ServiceManager.startService(table.getSelectionModel().getSelectedItem().getServiceID());

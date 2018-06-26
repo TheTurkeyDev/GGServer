@@ -73,6 +73,7 @@ public class ServerCore extends CcsClient
 		return true;
 	}
 
+	// TODO: Figure out a better logging strategy
 	public static void output(Level level, String sender, String message)
 	{
 		if(level == Level.DeBug && !debug)

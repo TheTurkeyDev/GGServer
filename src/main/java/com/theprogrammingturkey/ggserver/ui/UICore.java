@@ -1,11 +1,11 @@
 package com.theprogrammingturkey.ggserver.ui;
 
+import com.theprogrammingturkey.ggserver.news.NewsHolder;
 import com.theprogrammingturkey.ggserver.services.ActiveServiceWrapper;
 
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
@@ -15,6 +15,7 @@ public class UICore extends Application
 {
 	private static UICore instance;
 	private ConsoleTab consoleTab;
+	private NewsTab newsTab;
 	private ServiceTab serviceTab;
 
 	public static void init(String[] args)
@@ -45,9 +46,7 @@ public class UICore extends Application
 		/*
 		 * News Tab
 		 */
-		Tab newsTab = new Tab();
-		newsTab.setText("News");
-		tabPane.getTabs().add(newsTab);
+		tabPane.getTabs().add((newsTab = new NewsTab(scene)));
 
 		/*
 		 * Services Tab
@@ -76,6 +75,11 @@ public class UICore extends Application
 	public static void consoleMessage(String message)
 	{
 		instance.consoleTab.console.write(message + "\n");
+	}
+
+	public static void dispatchNews(NewsHolder news)
+	{
+		instance.newsTab.dispatchNews(news);
 	}
 
 	public static void updateService(ActiveServiceWrapper service)
