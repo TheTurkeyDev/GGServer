@@ -4,7 +4,7 @@
 
 	<groupId>com.theprogrammingturkey.ggserver</groupId>
 	<artifactId>GGServer</artifactId>
-	<version>0.4.0.${build.number}</version>
+	<version>0.4.1.${build.number}</version>
 	<packaging>jar</packaging>
 	<distributionManagement>
 		<repository>
