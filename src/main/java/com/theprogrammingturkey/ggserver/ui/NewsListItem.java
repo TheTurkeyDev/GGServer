@@ -12,7 +12,7 @@ import javafx.scene.text.Text;
 
 public class NewsListItem extends ListCell<NewsHolder>
 {
-	private NewsHolder lastItem;
+	// private NewsHolder lastItem;
 
 	public NewsListItem()
 	{
@@ -26,12 +26,12 @@ public class NewsListItem extends ListCell<NewsHolder>
 		setText(null); // No text in label of super class
 		if(empty)
 		{
-			lastItem = null;
+			// lastItem = null;
 			setGraphic(null);
 		}
 		else
 		{
-			lastItem = item;
+			// lastItem = item;
 
 			GridPane newsItem = new GridPane();
 			newsItem.setPadding(new Insets(5));

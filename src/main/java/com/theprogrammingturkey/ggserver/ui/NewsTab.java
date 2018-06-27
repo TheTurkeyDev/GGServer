@@ -11,6 +11,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -37,6 +38,7 @@ public class NewsTab extends Tab
 		newsList = FXCollections.observableArrayList();
 		ListView<NewsHolder> listView = new ListView<>(newsList);
 		listView.setPrefWidth(scene.getWidth() / 2);
+		listView.setMaxWidth(300);
 		listView.setCellFactory(new Callback<ListView<NewsHolder>, ListCell<NewsHolder>>()
 		{
 			@Override
@@ -59,18 +61,27 @@ public class NewsTab extends Tab
 			{
 				if(newValue != null)
 				{
+					details.getChildren().clear();
+
 					Text title = new Text(newValue.getNews().getTitle());
 					title.setFont(new Font(24));
+					title.wrappingWidthProperty().bind(details.widthProperty());
 					details.getChildren().add(title);
 					details.setAlignment(Pos.TOP_CENTER);
 					Text body = new Text(newValue.getNews().getData());
 					body.setFont(new Font(15));
+					body.wrappingWidthProperty().bind(details.widthProperty());
 					details.getChildren().add(body);
 				}
 			}
 		});
 
-		screenSplit.add(details, 1, 0);
+		ScrollPane scrollPane = new ScrollPane();
+		scrollPane.setPrefWidth(scene.getWidth() / 2);
+		scrollPane.setBackground(new Background(new BackgroundFill(Color.GRAY, null, null)));
+		scrollPane.setContent(details);
+
+		screenSplit.add(scrollPane, 1, 0);
 
 		this.setContent(screenSplit);
 	}
