@@ -77,6 +77,6 @@ public class NewsTab extends Tab
 
 	public void dispatchNews(NewsHolder news)
 	{
-		newsList.add(news);
+		newsList.add(0, news);
 	}
 }

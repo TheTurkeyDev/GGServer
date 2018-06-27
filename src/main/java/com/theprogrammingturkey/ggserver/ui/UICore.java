@@ -5,6 +5,7 @@ import com.theprogrammingturkey.ggserver.news.NewsHolder;
 import com.theprogrammingturkey.ggserver.services.ActiveServiceWrapper;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.TabPane;
@@ -86,7 +87,14 @@ public class UICore extends Application
 
 	public static void dispatchNews(NewsHolder news)
 	{
-		instance.newsTab.dispatchNews(news);
+		Platform.runLater(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				instance.newsTab.dispatchNews(news);
+			}
+		});
 	}
 
 	public static void updateService(ActiveServiceWrapper service)
