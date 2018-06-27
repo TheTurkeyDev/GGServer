@@ -78,7 +78,7 @@ public class CommandManager
 						page = Integer.parseInt(params[0]);
 					} catch(Exception e)
 					{
-						ServerCore.output(Level.Error, "Pi Server", params[0] + "is not a valid number!");
+						ServerCore.output(Level.Info, "Pi Server", params[0] + "is not a valid number!");
 						return;
 					}
 				}
