@@ -1,5 +1,6 @@
 package com.theprogrammingturkey.ggserver.ui;
 
+import com.theprogrammingturkey.ggserver.ServerCore;
 import com.theprogrammingturkey.ggserver.news.NewsHolder;
 import com.theprogrammingturkey.ggserver.services.ActiveServiceWrapper;
 
@@ -70,6 +71,12 @@ public class UICore extends Application
 
 		// Displaying the stage
 		primaryStage.show();
+	}
+
+	@Override
+	public void stop()
+	{
+		ServerCore.StopServer();
 	}
 
 	public static void consoleMessage(String message)
