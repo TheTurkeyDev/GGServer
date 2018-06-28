@@ -9,4 +9,6 @@ public interface INewsData
 	public String getData();
 	
 	public String getServiceID();
+	
+	public boolean hasNotification();
 }

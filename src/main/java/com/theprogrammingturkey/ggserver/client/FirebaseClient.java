@@ -54,7 +54,7 @@ public class FirebaseClient implements ClientConnection
 			message.setNotificationPayload(notificationPayload);
 		}
 
-		ServerCore.sendFCMMessage(MessageMapper.toJsonString(message));
+		ServerCore.sendFCMMessage(messageId, MessageMapper.toJsonString(message));
 	}
 
 	@Override

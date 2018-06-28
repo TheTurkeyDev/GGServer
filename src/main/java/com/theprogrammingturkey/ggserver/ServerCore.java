@@ -31,6 +31,8 @@ public class ServerCore extends CcsClient
 
 	private static ServerCore instance;
 
+	public static String myAppID = "";
+
 	protected static final Logger logger = LoggerFactory.getLogger("PI Server");
 
 	public ServerCore(String projectId, String apiKey)
@@ -55,16 +57,6 @@ public class ServerCore extends CcsClient
 		try
 		{
 			super.connect();
-			JsonObject json = new JsonObject();
-			json.addProperty("to", "dlkPv5MBWhY:APA91bEFT4TvYtEnIea-ZVTP-ugyuGkjgzcdnMR6kicRvcegCwTBVv10mitD_MyETzYqA8AIZXBFRto1-7a5o6K1iZEgZpMzIV5xRDlupUJpVsqoe_4NgFDPDU3vneYDhsyFLyK4DgrN");
-			String messageID = Util.getUniqueMessageId();
-			json.addProperty("message_id", messageID);
-			JsonObject notification = new JsonObject();
-			notification.addProperty("title", "Server Online!");
-			notification.addProperty("body", "boop");
-			json.add("notification", notification);
-			json.addProperty("time_to_live", 600);
-			super.sendDownstreamMessage(messageID, json.toString());
 		} catch(Exception e)
 		{
 			e.printStackTrace();
@@ -85,13 +77,26 @@ public class ServerCore extends CcsClient
 	@Override
 	public void handlePacketRecieved(CcsInMessage packet)
 	{
+		JsonObject json = JsonHelper.getJsonFromString(packet.getDataPayload().get("json_data")).getAsJsonObject();
+		if(json.has("purpose") && json.get("purpose").getAsString().equalsIgnoreCase("handshake"))
+		{
+			myAppID = json.getAsJsonObject("data").get("id").getAsString();
+			String uuid = Util.getUniqueMessageId();
+			JsonObject response = new JsonObject();
+			response.addProperty("to", myAppID);
+			response.addProperty("message_id", uuid);
+			response.addProperty("purpose", "handshake");
+			sendDownstreamMessage(uuid, response.toString());
+			output(Level.Info, "Pi Server", "APP Connected");
+			return;
+		}
 		EventManager.firePacketRecievedEvent(packet.getDataPayload().get("destination"), JsonHelper.getJsonFromMap(packet.getDataPayload()));
 		output(Level.Alert, "Pi Server", "Packet Recived! From:" + packet.getDataPayload().toString());
 	}
 
-	public static void sendFCMMessage(String message)
+	public static void sendFCMMessage(String uuid, String message)
 	{
-		instance.sendDownstreamMessage(Util.getUniqueMessageId(), message);
+		instance.sendDownstreamMessage(uuid, message);
 	}
 
 	public static void StopServer()
@@ -105,7 +110,6 @@ public class ServerCore extends CcsClient
 		while(instance.isAlive())
 		{
 		}
-		;
 
 		System.exit(1);
 	}

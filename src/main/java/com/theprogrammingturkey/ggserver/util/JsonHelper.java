@@ -30,4 +30,9 @@ public class JsonHelper
 	{
 		return PARSER.parse(jsonMap.toString());
 	}
+
+	public static JsonElement getJsonFromString(String json)
+	{
+		return PARSER.parse(json);
+	}
 }
