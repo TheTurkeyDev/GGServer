@@ -18,14 +18,7 @@ public class ConsoleArea extends OutputStream
 	@Override
 	public void write(int i) throws IOException
 	{
-		Platform.runLater(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				output.appendText(String.valueOf((char) i));
-			}
-		});
+		write(String.valueOf((char) i));
 	}
 
 	public void write(String message)
@@ -36,6 +29,15 @@ public class ConsoleArea extends OutputStream
 			public void run()
 			{
 				output.appendText(message);
+				String text = output.getText();
+				if(text.length() > 100000)
+				{
+					int end = text.length() - 100000;
+					while(text.charAt(end) != '\n')
+						end++;
+					end++;
+					output.replaceText(0, end, "");
+				}
 			}
 		});
 	}

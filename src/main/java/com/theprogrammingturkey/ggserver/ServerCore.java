@@ -1,9 +1,5 @@
 package com.theprogrammingturkey.ggserver;
 
-import java.io.EOFException;
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -12,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.gson.JsonObject;
-import com.theprogrammingturkey.ggserver.client.SocketClient;
 import com.theprogrammingturkey.ggserver.commands.CommandManager;
 import com.theprogrammingturkey.ggserver.events.EventManager;
 import com.theprogrammingturkey.ggserver.services.ServiceManager;
@@ -27,8 +22,6 @@ public class ServerCore extends CcsClient
 	public static boolean debug = false;
 	private static final SimpleDateFormat dateFormatter = new SimpleDateFormat("HH:mm:ss", Locale.US);
 
-	private Thread socketThread;
-
 	private static ServerCore instance;
 
 	public static String myAppID = "";
@@ -40,12 +33,17 @@ public class ServerCore extends CcsClient
 		super(projectId, apiKey, debug);
 		instance = this;
 		output(Level.Info, "Pi Server", "Starting Firebase Connection...");
+		
 		if(connectToFirebase())
+		{
 			output(Level.Info, "Pi Server", "Firebase Connected!");
-		output(Level.Info, "Pi Server", "Starting Server...");
-		// socketThread = new Thread(new SocketManager());
-		// socketThread.start();
-		output(Level.Info, "Pi Server", "Server Started!");
+		}
+		else
+		{
+			output(Level.Info, "Pi Server", "Failed to connect to Firebase!");
+			return;
+		}
+		
 		output(Level.Info, "Pi Server", "Loading Services...");
 		ServiceManager.startServices();
 		output(Level.Info, "Pi Server", "Services Loaded!");
@@ -80,17 +78,20 @@ public class ServerCore extends CcsClient
 		JsonObject json = JsonHelper.getJsonFromString(packet.getDataPayload().get("json_data")).getAsJsonObject();
 		if(json.has("purpose") && json.get("purpose").getAsString().equalsIgnoreCase("handshake"))
 		{
-			myAppID = json.getAsJsonObject("data").get("id").getAsString();
-			String uuid = Util.getUniqueMessageId();
-			JsonObject response = new JsonObject();
-			response.addProperty("to", myAppID);
-			response.addProperty("message_id", uuid);
-			response.addProperty("purpose", "handshake");
-			sendDownstreamMessage(uuid, response.toString());
-			output(Level.Info, "Pi Server", "APP Connected");
+			if(!json.getAsJsonObject("data").get("id").getAsString().equals(myAppID))
+			{
+				myAppID = json.getAsJsonObject("data").get("id").getAsString();
+				String uuid = Util.getUniqueMessageId();
+				JsonObject response = new JsonObject();
+				response.addProperty("to", myAppID);
+				response.addProperty("message_id", uuid);
+				response.addProperty("purpose", "handshake");
+				sendDownstreamMessage(uuid, response.toString());
+				output(Level.Info, "Pi Server", "APP Connected");
+			}
 			return;
 		}
-		EventManager.firePacketRecievedEvent(packet.getDataPayload().get("destination"), JsonHelper.getJsonFromMap(packet.getDataPayload()));
+		EventManager.firePacketRecievedEvent(json.get("destination").getAsString(), json);
 		output(Level.Alert, "Pi Server", "Packet Recived! From:" + packet.getDataPayload().toString());
 	}
 
@@ -128,51 +129,6 @@ public class ServerCore extends CcsClient
 		public String getLevel()
 		{
 			return this.level;
-		}
-	}
-
-	private static class SocketManager implements Runnable
-	{
-		private boolean running = false;
-
-		private ServerSocket server;
-
-		public void run()
-		{
-			running = true;
-			try
-			{
-				server = new ServerSocket(44949);
-				try
-				{
-					while(running)
-					{
-						Socket connection = server.accept();
-						SocketClient client = new SocketClient(connection, connection.getInetAddress().toString());
-						Thread thread = new Thread(client);
-						thread.start();
-						ClientManager.addClient(client);
-						output(Level.Info, "Pi Server", client.getIP() + " has connected");
-					}
-				} catch(EOFException eofException)
-				{
-					output(Level.Info, "Pi Server", "\n Server ended the connection! ");
-				} finally
-				{
-					output(Level.Info, "Pi Server", "Closing connections...");
-					try
-					{
-						ClientManager.closeAllClients();
-						server.close();
-					} catch(IOException ioException)
-					{
-						ioException.printStackTrace();
-					}
-				}
-			} catch(IOException ioException)
-			{
-				output(Level.Error, "Pi Server", "There is already a server running on that port!");
-			}
 		}
 	}
 }
