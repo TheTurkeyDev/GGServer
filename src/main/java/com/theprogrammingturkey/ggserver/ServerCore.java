@@ -10,8 +10,9 @@ import org.slf4j.LoggerFactory;
 import com.google.gson.JsonObject;
 import com.theprogrammingturkey.ggserver.commands.CommandManager;
 import com.theprogrammingturkey.ggserver.events.EventManager;
+import com.theprogrammingturkey.ggserver.files.FileManager;
 import com.theprogrammingturkey.ggserver.services.ServiceManager;
-import com.theprogrammingturkey.ggserver.ui.UICore;
+import com.theprogrammingturkey.ggserver.util.ConsoleHelper;
 import com.theprogrammingturkey.ggserver.util.JsonHelper;
 import com.wedevol.xmpp.bean.CcsInMessage;
 import com.wedevol.xmpp.server.CcsClient;
@@ -33,7 +34,7 @@ public class ServerCore extends CcsClient
 		super(projectId, apiKey, debug);
 		instance = this;
 		output(Level.Info, "Pi Server", "Starting Firebase Connection...");
-		
+
 		if(connectToFirebase())
 		{
 			output(Level.Info, "Pi Server", "Firebase Connected!");
@@ -43,7 +44,7 @@ public class ServerCore extends CcsClient
 			output(Level.Info, "Pi Server", "Failed to connect to Firebase!");
 			return;
 		}
-		
+
 		output(Level.Info, "Pi Server", "Loading Services...");
 		ServiceManager.startServices();
 		output(Level.Info, "Pi Server", "Services Loaded!");
@@ -69,7 +70,7 @@ public class ServerCore extends CcsClient
 		if(level == Level.DeBug && !debug)
 			return;
 
-		UICore.consoleMessage("[" + dateFormatter.format(new Date()) + "][" + sender + "] [" + level.getLevel() + "]: " + message);
+		ConsoleHelper.write("[" + dateFormatter.format(new Date()) + "][" + sender + "] [" + level.getLevel() + "]: " + message);
 	}
 
 	@Override
@@ -111,6 +112,8 @@ public class ServerCore extends CcsClient
 		while(instance.isAlive())
 		{
 		}
+
+		FileManager.closeFiles();
 
 		System.exit(1);
 	}

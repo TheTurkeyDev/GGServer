@@ -82,7 +82,8 @@ public class UICore extends Application
 
 	public static void consoleMessage(String message)
 	{
-		instance.consoleTab.console.write(message + "\n");
+		if(instance != null && instance.consoleTab != null)
+			instance.consoleTab.console.write(message + "\n");
 	}
 
 	public static void dispatchNews(NewsHolder news)

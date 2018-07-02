@@ -4,19 +4,24 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Properties;
 
 import org.jivesoftware.smack.SmackException;
 
 import com.theprogrammingturkey.ggserver.ServerCore.Level;
+import com.theprogrammingturkey.ggserver.files.FileManager;
 import com.theprogrammingturkey.ggserver.ui.UICore;
+import com.theprogrammingturkey.ggserver.util.ConsoleHelper;
 
 public class ServerLauncher
 {
-	private static String[] folders = new String[] { "config", "services" };
-
 	public static void main(String[] args) throws SmackException, IOException, InterruptedException
 	{
+		PrintStream ps = new PrintStream(new ConsoleHelper(), true);
+		System.setOut(ps);
+		System.setErr(ps);
+		
 		// TODO: Idk what the best way is, but this works for now
 		new Thread(new Runnable()
 		{
@@ -29,14 +34,8 @@ public class ServerLauncher
 
 		// TODO: Don't do this
 		Thread.sleep(3000);
-
-		File folderFile;
-		for(String folder : folders)
-		{
-			folderFile = new File(folder);
-			if(!folderFile.exists())
-				folderFile.mkdirs();
-		}
+		
+		FileManager.initFiles();
 
 		Properties properties = new Properties();
 		File file = new File("settings.prop");

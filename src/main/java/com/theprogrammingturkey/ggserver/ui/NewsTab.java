@@ -89,5 +89,7 @@ public class NewsTab extends Tab
 	public void dispatchNews(NewsHolder news)
 	{
 		newsList.add(0, news);
+		if(newsList.size() > 100)
+			newsList.remove(100);
 	}
 }

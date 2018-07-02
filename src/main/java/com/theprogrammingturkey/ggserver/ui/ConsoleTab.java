@@ -1,7 +1,5 @@
 package com.theprogrammingturkey.ggserver.ui;
 
-import java.io.PrintStream;
-
 import com.theprogrammingturkey.ggserver.commands.CommandManager;
 
 import javafx.geometry.Insets;
@@ -48,9 +46,6 @@ public class ConsoleTab extends Tab
 		});
 
 		console = new ConsoleArea(consoleText);
-		PrintStream ps = new PrintStream(console, true);
-		System.setOut(ps);
-		System.setErr(ps);
 
 		consolePane.add(consoleText, 0, 0);
 		consolePane.add(consoleInput, 0, 1);
