@@ -14,13 +14,13 @@ import com.theprogrammingturkey.ggserver.files.FileManager;
 import com.theprogrammingturkey.ggserver.services.ServiceManager;
 import com.theprogrammingturkey.ggserver.util.ConsoleHelper;
 import com.theprogrammingturkey.ggserver.util.JsonHelper;
+import com.theprogrammingturkey.ggserver.util.Settings;
 import com.wedevol.xmpp.bean.CcsInMessage;
 import com.wedevol.xmpp.server.CcsClient;
 import com.wedevol.xmpp.util.Util;
 
 public class ServerCore extends CcsClient
 {
-	public static boolean debug = false;
 	private static final SimpleDateFormat dateFormatter = new SimpleDateFormat("HH:mm:ss", Locale.US);
 
 	private static ServerCore instance;
@@ -31,7 +31,7 @@ public class ServerCore extends CcsClient
 
 	public ServerCore(String projectId, String apiKey)
 	{
-		super(projectId, apiKey, debug);
+		super(projectId, apiKey, Settings.debugMode);
 		instance = this;
 		output(Level.Info, "Pi Server", "Starting Firebase Connection...");
 
@@ -67,7 +67,7 @@ public class ServerCore extends CcsClient
 	// TODO: Figure out a better logging strategy
 	public static void output(Level level, String sender, String message)
 	{
-		if(level == Level.DeBug && !debug)
+		if(level == Level.DeBug && !Settings.debugMode)
 			return;
 
 		ConsoleHelper.write("[" + dateFormatter.format(new Date()) + "][" + sender + "] [" + level.getLevel() + "]: " + message);

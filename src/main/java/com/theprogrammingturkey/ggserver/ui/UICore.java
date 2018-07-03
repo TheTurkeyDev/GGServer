@@ -1,105 +1,59 @@
 package com.theprogrammingturkey.ggserver.ui;
 
-import com.theprogrammingturkey.ggserver.ServerCore;
 import com.theprogrammingturkey.ggserver.news.NewsHolder;
 import com.theprogrammingturkey.ggserver.services.ActiveServiceWrapper;
+import com.theprogrammingturkey.ggserver.util.Settings;
 
-import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.scene.Group;
-import javafx.scene.Scene;
-import javafx.scene.control.TabPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.paint.Color;
-import javafx.stage.Stage;
-
-public class UICore extends Application
+public class UICore
 {
-	private static UICore instance;
-	private ConsoleTab consoleTab;
-	private NewsTab newsTab;
-	private ServiceTab serviceTab;
+	private static IUI uiInstance;
 
-	public static void init(String[] args)
+	public static void initUI(String[] args)
 	{
-		launch(args);
+		if(Settings.lightGUI)
+		{
+			uiInstance = new UILight();
+		}
+		else
+		{
+			new Thread(new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					UIJavaFx.init(args);
+				}
+			}).start();
+
+			// TODO: Don't do this
+			try
+			{
+				Thread.sleep(3000);
+			} catch(InterruptedException e)
+			{
+				e.printStackTrace();
+			}
+		}
 	}
 
-	public UICore()
+	// TODO: This seems really stupid, but idk a way around this
+	public static void setUIIstance(IUI instance)
 	{
-		instance = this;
-	}
-
-	@Override
-	public void start(Stage primaryStage) throws Exception
-	{
-		Group root = new Group();
-
-		Scene scene = new Scene(root, 800, 400);
-		TabPane tabPane = new TabPane();
-		BorderPane borderPane = new BorderPane();
-
-		/*
-		 * Console Tab
-		 */
-
-		tabPane.getTabs().add((consoleTab = new ConsoleTab(scene)));
-
-		/*
-		 * News Tab
-		 */
-		tabPane.getTabs().add((newsTab = new NewsTab(scene)));
-
-		/*
-		 * Services Tab
-		 */
-		tabPane.getTabs().add((serviceTab = new ServiceTab(scene)));
-
-		// bind to take available space
-		borderPane.prefHeightProperty().bind(scene.heightProperty());
-		borderPane.prefWidthProperty().bind(scene.widthProperty());
-
-		borderPane.setCenter(tabPane);
-		root.getChildren().add(borderPane);
-
-		scene.setFill(Color.DIMGRAY);
-
-		// Setting the title to Stage.
-		primaryStage.setTitle("Gobble Google Server");
-
-		// Setting the scene to Stage
-		primaryStage.setScene(scene);
-
-		// Displaying the stage
-		primaryStage.show();
-	}
-
-	@Override
-	public void stop()
-	{
-		ServerCore.StopServer();
+		uiInstance = instance;
 	}
 
 	public static void consoleMessage(String message)
 	{
-		if(instance != null && instance.consoleTab != null)
-			instance.consoleTab.console.write(message + "\n");
+		uiInstance.consoleMessage(message);
 	}
 
 	public static void dispatchNews(NewsHolder news)
 	{
-		Platform.runLater(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				instance.newsTab.dispatchNews(news);
-			}
-		});
+		uiInstance.dispatchNews(news);
 	}
 
 	public static void updateService(ActiveServiceWrapper service)
 	{
-		instance.serviceTab.updateService(service);
+		uiInstance.updateService(service);
 	}
 }

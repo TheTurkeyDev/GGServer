@@ -4,7 +4,7 @@
 
 	<groupId>com.theprogrammingturkey.ggserver</groupId>
 	<artifactId>GGServer</artifactId>
-	<version>0.4.3.${build.number}</version>
+	<version>0.5.0.${build.number}</version>
 	<packaging>jar</packaging>
 	<distributionManagement>
 		<repository>
@@ -48,7 +48,12 @@
 		<dependency>
 			<groupId>com.theprogrammingturkey.volatiliaApi</groupId>
 			<artifactId>VolatiliaAPI-Java</artifactId>
-			<version>0.1.4.28</version>
+			<version>0.1.4.29</version>
+		</dependency>
+		<dependency>
+			<groupId>com.theprogrammingturkey.volatiliaApi</groupId>
+			<artifactId>VolatiliaAPI-WebAccess</artifactId>
+			<version>0.2.5</version>
 		</dependency>
 	</dependencies>
 	<build>

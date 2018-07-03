@@ -1,6 +1,5 @@
 package com.theprogrammingturkey.ggserver.ui;
 
-import javafx.application.Platform;
 import javafx.scene.control.TextArea;
 
 public class ConsoleArea
@@ -14,22 +13,15 @@ public class ConsoleArea
 
 	public void write(String message)
 	{
-		Platform.runLater(new Runnable()
+		output.appendText(message);
+		String text = output.getText();
+		if(text.length() > 100000)
 		{
-			@Override
-			public void run()
-			{
-				output.appendText(message);
-				String text = output.getText();
-				if(text.length() > 100000)
-				{
-					int end = text.length() - 100000;
-					while(text.charAt(end) != '\n')
-						end++;
-					end++;
-					output.replaceText(0, end, "");
-				}
-			}
-		});
+			int end = text.length() - 100000;
+			while(text.charAt(end) != '\n')
+				end++;
+			end++;
+			output.replaceText(0, end, "");
+		}
 	}
 }

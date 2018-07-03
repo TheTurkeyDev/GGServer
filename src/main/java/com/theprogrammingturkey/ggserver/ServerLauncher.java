@@ -13,28 +13,26 @@ import com.theprogrammingturkey.ggserver.ServerCore.Level;
 import com.theprogrammingturkey.ggserver.files.FileManager;
 import com.theprogrammingturkey.ggserver.ui.UICore;
 import com.theprogrammingturkey.ggserver.util.ConsoleHelper;
+import com.theprogrammingturkey.ggserver.util.Settings;
 
 public class ServerLauncher
 {
 	public static void main(String[] args) throws SmackException, IOException, InterruptedException
 	{
+		for(String arg : args)
+		{
+			if(arg.equalsIgnoreCase("lightgui"))
+				Settings.lightGUI = true;
+			else if(arg.equalsIgnoreCase("debug"))
+				Settings.debugMode = true;
+		}
+
 		PrintStream ps = new PrintStream(new ConsoleHelper(), true);
 		System.setOut(ps);
 		System.setErr(ps);
 		
-		// TODO: Idk what the best way is, but this works for now
-		new Thread(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				UICore.init(args);
-			}
-		}).start();
+		UICore.initUI(args);
 
-		// TODO: Don't do this
-		Thread.sleep(3000);
-		
 		FileManager.initFiles();
 
 		Properties properties = new Properties();
