@@ -29,6 +29,7 @@ public class UILight extends JFrame implements IUI
 
 		console = new JTextArea();
 		console.setEditable(false);
+		console.setLineWrap(true);
 		console.setWrapStyleWord(true);
 		console.setSize(560, 300);
 		console.setLocation(10, 10);
@@ -69,6 +70,8 @@ public class UILight extends JFrame implements IUI
 	@Override
 	public void consoleMessage(String message)
 	{
+		if(this.console.getLineCount() > 1000)
+			this.console.setText("");
 		this.console.append(message + "\n");
 	}
 

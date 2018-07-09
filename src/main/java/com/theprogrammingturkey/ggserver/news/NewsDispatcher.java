@@ -41,5 +41,6 @@ public class NewsDispatcher
 		data.addProperty("data", news.getData());
 		json.add("data", data);
 		ServerCore.sendFCMMessage(messageID, json.toString());
+		ServerCore.output(Level.Info, "Pi Server", "New news! '" + news.getTitle() + "' by '" + service.getServiceID() + "'");
 	}
 }

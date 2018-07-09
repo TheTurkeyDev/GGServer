@@ -28,9 +28,10 @@ public class ServerLauncher
 		}
 
 		PrintStream ps = new PrintStream(new ConsoleHelper(), true);
-		System.setOut(ps);
+		if(Settings.debugMode)
+			System.setOut(ps);
 		System.setErr(ps);
-		
+
 		UICore.initUI(args);
 
 		FileManager.initFiles();
