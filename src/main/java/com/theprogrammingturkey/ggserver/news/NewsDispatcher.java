@@ -34,11 +34,14 @@ public class NewsDispatcher
 		}
 
 		JsonObject data = new JsonObject();
-		data.addProperty("service_name", service.getServiceName());
-		data.addProperty("service_id", service.getServiceID());
-		data.addProperty("title", news.getTitle());
-		data.addProperty("desc", news.getDesc());
-		data.addProperty("data", news.getData());
+		data.addProperty("purpose", "News");
+		JsonObject newsData = new JsonObject();
+		newsData.addProperty("service_name", service.getServiceName());
+		newsData.addProperty("service_id", service.getServiceID());
+		newsData.addProperty("title", news.getTitle());
+		newsData.addProperty("desc", news.getDesc());
+		newsData.addProperty("data", news.getData());
+		data.add("news_data", newsData);
 		json.add("data", data);
 		ServerCore.sendFCMMessage(messageID, json.toString());
 		ServerCore.output(Level.Info, "Pi Server", "New news! '" + news.getTitle() + "' by '" + service.getServiceID() + "'");
