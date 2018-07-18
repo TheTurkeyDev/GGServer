@@ -21,18 +21,23 @@ public class NewsDispatcher
 		UICore.dispatchNews(new NewsHolder(service, news));
 
 		JsonObject json = new JsonObject();
-		json.addProperty("to", ServerCore.myAppID);
 		String messageID = Util.getUniqueMessageId();
-		json.addProperty("message_id", messageID);
+		
 
 		if(news.hasNotification())
 		{
+			json.addProperty("to", ServerCore.myAppID);
+			json.addProperty("message_id", messageID);
 			JsonObject notification = new JsonObject();
 			notification.addProperty("title", news.getTitle());
 			notification.addProperty("body", news.getDesc());
 			json.add("notification", notification);
+			ServerCore.sendFCMMessage(messageID, json.toString());
+			messageID = Util.getUniqueMessageId();
+			json = new JsonObject();
 		}
 
+		json.addProperty("message_id", messageID);
 		JsonObject data = new JsonObject();
 		data.addProperty("purpose", "News");
 		JsonObject newsData = new JsonObject();
@@ -43,6 +48,7 @@ public class NewsDispatcher
 		newsData.addProperty("data", news.getData());
 		data.add("news_data", newsData);
 		json.add("data", data);
+		
 		ServerCore.sendFCMMessage(messageID, json.toString());
 		ServerCore.output(Level.Info, "Pi Server", "New news! '" + news.getTitle() + "' by '" + service.getServiceID() + "'");
 	}
