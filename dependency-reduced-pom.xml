@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.theprogrammingturkey.turkeyPiServer</groupId>
-  <artifactId>TurkeyPiServer</artifactId>
-  <version>1.2</version>
+  <groupId>com.theprogrammingturkey.ggserver</groupId>
+  <artifactId>GGServer</artifactId>
+  <version>0.5.1.${build.number}</version>
   <build>
     <plugins>
       <plugin>
@@ -19,7 +19,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>com.theprogrammingturkey.turkeyPiServer.ServerCore</mainClass>
+              <mainClass>com.theprogrammingturkey.ggserver.ServerLauncher</mainClass>
             </manifest>
           </archive>
         </configuration>
