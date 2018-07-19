@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.gson.JsonObject;
+import com.theprogrammingturkey.ggserver.client.ClientManager;
+import com.theprogrammingturkey.ggserver.client.FirebaseClient;
 import com.theprogrammingturkey.ggserver.commands.CommandManager;
 import com.theprogrammingturkey.ggserver.events.EventManager;
 import com.theprogrammingturkey.ggserver.files.FileManager;
@@ -17,15 +19,12 @@ import com.theprogrammingturkey.ggserver.util.JsonHelper;
 import com.theprogrammingturkey.ggserver.util.Settings;
 import com.wedevol.xmpp.bean.CcsInMessage;
 import com.wedevol.xmpp.server.CcsClient;
-import com.wedevol.xmpp.util.Util;
 
 public class ServerCore extends CcsClient
 {
 	private static final SimpleDateFormat dateFormatter = new SimpleDateFormat("HH:mm:ss", Locale.US);
 
 	private static ServerCore instance;
-
-	public static String myAppID = "";
 
 	protected static final Logger logger = LoggerFactory.getLogger("PI Server");
 
@@ -79,15 +78,16 @@ public class ServerCore extends CcsClient
 		JsonObject json = JsonHelper.getJsonFromString(packet.getDataPayload().get("json_data")).getAsJsonObject();
 		if(json.has("purpose") && json.get("purpose").getAsString().equalsIgnoreCase("handshake"))
 		{
-			if(!json.getAsJsonObject("data").get("id").getAsString().equals(myAppID))
+			JsonObject dataJson = json.getAsJsonObject("data");
+			if(ClientManager.getClientFromID(dataJson.get("id").getAsString()) == null)
 			{
-				myAppID = json.getAsJsonObject("data").get("id").getAsString();
-				String uuid = Util.getUniqueMessageId();
+				FirebaseClient client = new FirebaseClient(dataJson.get("name").getAsString(), dataJson.get("id").getAsString());
 				JsonObject response = new JsonObject();
-				response.addProperty("to", myAppID);
-				response.addProperty("message_id", uuid);
 				response.addProperty("purpose", "handshake");
-				sendDownstreamMessage(uuid, response.toString());
+				response.addProperty("notification_title", "Connected");
+				response.addProperty("notification_body", "Connected to the server!");
+				client.sendMessage(response);
+				ClientManager.addClient(client);
 				output(Level.Info, "Pi Server", "APP Connected");
 			}
 			return;

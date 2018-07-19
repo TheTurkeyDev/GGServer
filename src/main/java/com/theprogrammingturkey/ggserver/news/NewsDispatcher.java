@@ -3,10 +3,10 @@ package com.theprogrammingturkey.ggserver.news;
 import com.google.gson.JsonObject;
 import com.theprogrammingturkey.ggserver.ServerCore;
 import com.theprogrammingturkey.ggserver.ServerCore.Level;
+import com.theprogrammingturkey.ggserver.client.ClientManager;
 import com.theprogrammingturkey.ggserver.services.IServiceCore;
 import com.theprogrammingturkey.ggserver.services.ServiceManager;
 import com.theprogrammingturkey.ggserver.ui.UICore;
-import com.wedevol.xmpp.util.Util;
 
 public class NewsDispatcher
 {
@@ -21,35 +21,21 @@ public class NewsDispatcher
 		UICore.dispatchNews(new NewsHolder(service, news));
 
 		JsonObject json = new JsonObject();
-		String messageID = Util.getUniqueMessageId();
+		json.addProperty("purpose", "News");
 		
-
 		if(news.hasNotification())
 		{
-			json.addProperty("to", ServerCore.myAppID);
-			json.addProperty("message_id", messageID);
-			JsonObject notification = new JsonObject();
-			notification.addProperty("title", news.getTitle());
-			notification.addProperty("body", news.getDesc());
-			json.add("notification", notification);
-			ServerCore.sendFCMMessage(messageID, json.toString());
-			messageID = Util.getUniqueMessageId();
-			json = new JsonObject();
+			json.addProperty("notification_title", news.getTitle());
+			json.addProperty("notification_body", news.getDesc());
 		}
-
-		json.addProperty("message_id", messageID);
-		JsonObject data = new JsonObject();
-		data.addProperty("purpose", "News");
-		JsonObject newsData = new JsonObject();
-		newsData.addProperty("service_name", service.getServiceName());
-		newsData.addProperty("service_id", service.getServiceID());
-		newsData.addProperty("title", news.getTitle());
-		newsData.addProperty("desc", news.getDesc());
-		newsData.addProperty("data", news.getData());
-		data.add("news_data", newsData);
-		json.add("data", data);
 		
-		ServerCore.sendFCMMessage(messageID, json.toString());
+		json.addProperty("service_name", service.getServiceName());
+		json.addProperty("service_id", service.getServiceID());
+		json.addProperty("title", news.getTitle());
+		json.addProperty("desc", news.getDesc());
+		json.addProperty("data", news.getData());
+		
+		ClientManager.sendMessageToAll(json);
 		ServerCore.output(Level.Info, "Pi Server", "New news! '" + news.getTitle() + "' by '" + service.getServiceID() + "'");
 	}
 }

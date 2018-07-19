@@ -9,7 +9,7 @@ import com.wedevol.xmpp.bean.CcsOutMessage;
 import com.wedevol.xmpp.util.MessageMapper;
 import com.wedevol.xmpp.util.Util;
 
-public class FirebaseClient implements ClientConnection
+public class FirebaseClient
 {
 	private String name;
 	private String clientID;
@@ -20,16 +20,14 @@ public class FirebaseClient implements ClientConnection
 		this.clientID = clientID;
 	}
 
-	@Override
-	public void closeConnection()
-	{
-
-	}
-
-	@Override
 	public String getName()
 	{
 		return name;
+	}
+
+	public String getID()
+	{
+		return this.clientID;
 	}
 
 	public void setClientID(String id)
@@ -37,29 +35,30 @@ public class FirebaseClient implements ClientConnection
 		this.clientID = id;
 	}
 
-	@Override
 	public void sendMessage(JsonObject data)
 	{
-		String messageId = Util.getUniqueMessageId();
 		Map<String, String> dataPayload = new HashMap<>();
 		dataPayload.put(Util.PAYLOAD_ATTRIBUTE_MESSAGE, data.toString());
 
-		CcsOutMessage message = new CcsOutMessage(clientID, messageId, dataPayload);
+		CcsOutMessage message = new CcsOutMessage(clientID, Util.getUniqueMessageId(), dataPayload);
+		ServerCore.sendFCMMessage(message.getMessageId(), MessageMapper.toJsonString(message));
 
+		// For some reason you can send a message with both data an a notification or else the
+		// notification doesn't trigger. To get around this we send 2 separate messages
 		if(data.has("notification_title") && data.has("notification_body"))
 		{
+			message = new CcsOutMessage(clientID, Util.getUniqueMessageId(), null);
 			Map<String, String> notificationPayload = new HashMap<>();
 			notificationPayload.put("title", data.get("notification_title").getAsString());
 			notificationPayload.put("body", data.get("notification_body").getAsString());
 			message.setNotificationPayload(notificationPayload);
-		}
 
-		ServerCore.sendFCMMessage(messageId, MessageMapper.toJsonString(message));
+			ServerCore.sendFCMMessage(message.getMessageId(), MessageMapper.toJsonString(message));
+		}
 	}
 
-	@Override
-	public ClientType getClientType()
+	public void closeConnection()
 	{
-		return ClientType.FCM;
+
 	}
 }
