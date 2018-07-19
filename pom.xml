@@ -82,7 +82,7 @@
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
-					<finalName>GGServer-Launcher</finalName>
+					<finalName>GGServer-Launcher-${version}</finalName>
 					<archive>
 						<manifest>
 							<mainClass>com.theprogrammingturkey.ggserver.ServerLauncher</mainClass>
