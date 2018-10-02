@@ -79,16 +79,18 @@ public class ServerCore extends CcsClient
 		if(json.has("purpose") && json.get("purpose").getAsString().equalsIgnoreCase("handshake"))
 		{
 			JsonObject dataJson = json.getAsJsonObject("data");
-			if(ClientManager.getClientFromID(dataJson.get("id").getAsString()) == null)
+			String name = dataJson.get("name").getAsString();
+			String id = dataJson.get("id").getAsString();
+			if(ClientManager.getClientFromID(id) == null)
 			{
-				FirebaseClient client = new FirebaseClient(dataJson.get("name").getAsString(), dataJson.get("id").getAsString());
+				FirebaseClient client = new FirebaseClient(name, id);
 				JsonObject response = new JsonObject();
 				response.addProperty("purpose", "handshake");
 				response.addProperty("notification_title", "Connected");
 				response.addProperty("notification_body", "Connected to the server!");
 				client.sendMessage(response);
 				ClientManager.addClient(client);
-				output(Level.Info, "Pi Server", "APP Connected");
+				output(Level.Info, "Pi Server", name + "(" + id + ") Connected!");
 			}
 			return;
 		}

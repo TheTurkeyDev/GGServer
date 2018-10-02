@@ -22,19 +22,23 @@ public class NewsDispatcher
 
 		JsonObject json = new JsonObject();
 		json.addProperty("purpose", "News");
-		
+
 		if(news.hasNotification())
 		{
 			json.addProperty("notification_title", news.getTitle());
 			json.addProperty("notification_body", news.getDesc());
 		}
-		
-		json.addProperty("service_name", service.getServiceName());
-		json.addProperty("service_id", service.getServiceID());
-		json.addProperty("title", news.getTitle());
-		json.addProperty("desc", news.getDesc());
-		json.addProperty("data", news.getData());
-		
+
+		JsonObject data = new JsonObject();
+
+		data.addProperty("service_name", service.getServiceName());
+		data.addProperty("service_id", service.getServiceID());
+		data.addProperty("title", news.getTitle());
+		data.addProperty("desc", news.getDesc());
+		data.addProperty("data", news.getData());
+
+		json.add("data", data);
+
 		ClientManager.sendMessageToAll(json);
 		ServerCore.output(Level.Info, "Pi Server", "New news! '" + news.getTitle() + "' by '" + service.getServiceID() + "'");
 	}
