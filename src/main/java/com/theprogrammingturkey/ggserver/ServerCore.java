@@ -41,7 +41,8 @@ public class ServerCore extends CcsClient
 		else
 		{
 			output(Level.Info, "Pi Server", "Failed to connect to Firebase!");
-			return;
+			if(!Settings.debugMode)
+				return;
 		}
 
 		output(Level.Info, "Pi Server", "Loading Services...");
