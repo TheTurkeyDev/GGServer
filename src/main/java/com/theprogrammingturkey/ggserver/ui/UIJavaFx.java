@@ -73,6 +73,7 @@ public class UIJavaFx extends Application implements IUI
 	public void stop()
 	{
 		ServerCore.StopServer();
+		System.exit(0);
 	}
 
 	@Override
